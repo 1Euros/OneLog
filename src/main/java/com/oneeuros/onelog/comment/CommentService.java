@@ -1,5 +1,6 @@
 package com.oneeuros.onelog.comment;
 
+import com.oneeuros.onelog.comment.dto.CommentCreateRequestDto;
 import com.oneeuros.onelog.common.PasswordUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +12,12 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
 
-
     // 댓글 저장
     @Transactional
-    public Comment save(String nickname, String password, String content) {
+    public Comment save(CommentCreateRequestDto requestDto) {
+        String nickname = requestDto.nickname();
+        String content = requestDto.content();
+        String password = requestDto.password();
         // 유효성 검증
         // 닉네임 검증
         if(nickname == null || nickname.trim().isEmpty()) throw new IllegalArgumentException("닉네임은 빈칸이 불가능합니다.");
