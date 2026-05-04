@@ -1,6 +1,6 @@
 package com.oneeuros.onelog.comment;
 
-import com.oneeuros.onelog.common.PasswordValidator;
+import com.oneeuros.onelog.common.PasswordUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,14 @@ public class CommentService {
         else if (nickname.length() > 30) throw new IllegalArgumentException("닉네임은 30자 이하만 가능합니다");
         // 내용 빈칸 검증
         if(content == null || content.trim().isEmpty()) throw new IllegalArgumentException("내용은 빈칸이 불가능합니다.");
+        // 비밀번호 6자리 검증
+        PasswordUtils.validatePassword(password);
 
-        PasswordValidator.validatePassword(password);
+        // 비밀번호 인코딩
+        String encodedPassword = PasswordUtils.encodePassword(password);
 
         // 데이터 저장
-        Comment comment = new Comment(nickname, password, content);
+        Comment comment = new Comment(nickname, encodedPassword, content);
         return commentRepository.save(comment);
     }
 }
