@@ -1,3 +1,11 @@
+---
+name: feature_issue
+about: 새 기능 추가
+title: "[Feature] "
+labels: feature
+assignees: ''
+---
+
 ## 🆕 기능 설명
 <!-- 추가하려는 기능에 대해 설명해주세요 -->
 예: 사용자가 프로필 사진을 변경할 수 있도록 한다.
