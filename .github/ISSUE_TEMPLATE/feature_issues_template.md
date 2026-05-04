@@ -1,5 +1,5 @@
 ---
-name: feature_issue
+name: feature
 about: 새 기능 추가
 title: "[Feature] "
 labels: feature
@@ -15,7 +15,9 @@ assignees: ''
 ## 📌 상세 내용
 기능의 동작 방식이나 요구사항을 구체적으로 작성해주세요
 
--
+- [ ] 기능 1
+  - [ ] 기능 1-1
+- [ ] 기능 2
 
 ---
 
