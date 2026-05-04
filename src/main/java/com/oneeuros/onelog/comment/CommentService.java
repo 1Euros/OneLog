@@ -18,14 +18,14 @@ public class CommentService {
         String nickname = requestDto.nickname();
         String content = requestDto.content();
         String password = requestDto.password();
-        // 유효성 검증
-        // 닉네임 검증
-        if(nickname == null || nickname.trim().isEmpty()) throw new IllegalArgumentException("닉네임은 빈칸이 불가능합니다.");
-        else if (nickname.length() > 30) throw new IllegalArgumentException("닉네임은 30자 이하만 가능합니다");
-        // 내용 빈칸 검증
-        if(content == null || content.trim().isEmpty()) throw new IllegalArgumentException("내용은 빈칸이 불가능합니다.");
-        // 비밀번호 6자리 검증
-        PasswordUtils.validatePassword(password);
+//        // 유효성 검증
+//        // 닉네임 검증
+//        if(nickname == null || nickname.trim().isEmpty()) throw new IllegalArgumentException("닉네임은 빈칸이 불가능합니다.");
+//        else if (nickname.length() > 30) throw new IllegalArgumentException("닉네임은 30자 이하만 가능합니다");
+//        // 내용 빈칸 검증
+//        if(content == null || content.trim().isEmpty()) throw new IllegalArgumentException("내용은 빈칸이 불가능합니다.");
+//        // 비밀번호 6자리 검증
+//        PasswordUtils.validatePassword(password);
 
         // 비밀번호 인코딩
         String encodedPassword = PasswordUtils.encodePassword(password);
