@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/comment")
@@ -48,5 +50,13 @@ public class CommentController {
         Comment comment = commentService.save(postId, requestDto);
         model.addAttribute("comment", comment);
         return "comments/comments";
+    }
+
+    // 댓글 목록 조회
+    @GetMapping("/post/{postId}/comments")
+    public String findComments(@PathVariable Long postId, Model model) {
+        List<Comment> comments = commentService.findComments(postId);
+        model.addAttribute("comments",comments);
+        return "comments/commentslist";
     }
 }

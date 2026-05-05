@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -27,5 +29,13 @@ public class CommentService {
         // 데이터 저장
         Comment comment = new Comment(requestDto.nickname(), encodedPassword, requestDto.content(), post);
         return commentRepository.save(comment);
+    }
+
+    public List<Comment> findComments(Long postId) {
+        // 해당 게시글 있는지 확인
+        postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 아이디의 게시글이 없습니다."));
+
+        return commentRepository.findAllByPostId(postId);
+
     }
 }
