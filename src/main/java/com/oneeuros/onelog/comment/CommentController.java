@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,13 +18,14 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/show/input")
-    public String showInputComment() {
+    @GetMapping("/post/{postId}/show/input")
+    public String showInputComment(@PathVariable Long postId, Model model) {
+        model.addAttribute("postId",postId);
         return "comments/showInputComment";
     }
 
-    @PostMapping("/create")
-    public String saveComment(@Valid CommentCreateRequestDto requestDto, BindingResult bindingResult,  Model model) {
+    @PostMapping("/post/{postId}/create")
+    public String saveComment(@PathVariable Long postId, @Valid CommentCreateRequestDto requestDto, BindingResult bindingResult, Model model) {
         // 유효성 검증
         if (bindingResult.hasErrors()) {
             if (bindingResult.hasFieldErrors("nickname")) {
@@ -43,7 +45,7 @@ public class CommentController {
 
             return "comments/showInputComment";
         }
-        Comment comment = commentService.save(requestDto);
+        Comment comment = commentService.save(postId, requestDto);
         model.addAttribute("comment", comment);
         return "comments/comments";
     }
