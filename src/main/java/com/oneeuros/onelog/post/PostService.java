@@ -1,6 +1,6 @@
 package com.oneeuros.onelog.post;
 
-import com.oneeuros.onelog.common.PasswordValidator;
+//import com.oneeuros.onelog.common.PasswordValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class PostService {
         validatePasswordRequired(request.password());
 
         // 비밀번호 숫자 6자리 검증
-        PasswordValidator.validatePassword(request.password());
+        //PasswordValidator.validatePassword(request.password());  // 임의 주석 처리
 
         // 제목 필수값 검증
         validateTitle(request.title());
