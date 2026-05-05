@@ -18,10 +18,7 @@ public class BoardController {
     public String saveBoard(
             @RequestParam String name,
             Model model) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new RuntimeException("게시판 이름은 필수입니다");
-        }
-        Board board = boardService.save(name.trim());
+        Board board = boardService.save(name);
         model.addAttribute("board", board);
         return "boards/boards";
     }

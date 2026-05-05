@@ -14,10 +14,11 @@ public class BoardService {
         if (name == null || name.trim().isEmpty()) {
             throw new RuntimeException("게시판 이름은 필수입니다");
         }
-        if (boardRepository.existsByName(name.trim())) {
+        name = name.trim();
+        if (boardRepository.existsByName(name)) {
             throw new IllegalArgumentException("이미 존재하는 게시판입니다");
         }
-        Board board = new Board(name.trim());
+        Board board = new Board(name);
         return boardRepository.save(board);
     }
 }

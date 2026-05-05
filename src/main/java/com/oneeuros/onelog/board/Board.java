@@ -19,10 +19,7 @@ public class Board extends BaseEntity {
     private String name;
 
     public Board(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new RuntimeException("게시판 이름은 필수입니다");
-        }
-        this.name = name.trim();
+        this.name = name;
         // 앞 뒤 공백 방지
     }
 }
