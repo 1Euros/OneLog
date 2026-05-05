@@ -35,7 +35,7 @@ public class CommentService {
         // 해당 게시글 있는지 확인
         postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 아이디의 게시글이 없습니다."));
 
-        return commentRepository.findAllByPostId(postId);
+        return commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
 
     }
 }
