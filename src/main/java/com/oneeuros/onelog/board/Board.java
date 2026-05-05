@@ -22,4 +22,8 @@ public class Board extends BaseEntity {
         this.name = name;
         // 앞 뒤 공백 방지
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }
