@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class BoardController {
     private final BoardService boardService;
 
+    //post 방식으로 수정
     @PostMapping ("/create")
     public String saveBoard(
             @RequestParam String name,
