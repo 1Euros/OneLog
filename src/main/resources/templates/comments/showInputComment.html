@@ -32,13 +32,9 @@
             제출
         </button>
     </form>
-    <input type="hidden" id="errorMessage" th:value="${errorMessage}">
 
-    <script>
-        const errorMessage = document.getElementById("errorMessage").value;
-        if (errorMessage) {
-            alert(errorMessage);
-        }
-    </script>
+<script th:inline="javascript">
+    alert(/*[[${errorMessage}]]*/)
+</script>
 </body>
 </html>
