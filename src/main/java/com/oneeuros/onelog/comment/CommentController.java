@@ -1,6 +1,8 @@
 package com.oneeuros.onelog.comment;
 
 import com.oneeuros.onelog.comment.dto.CommentCreateRequestDto;
+import com.oneeuros.onelog.post.Post;
+import com.oneeuros.onelog.post.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,10 +21,15 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+    private final PostService postService;
 
     @PostMapping("/post/{postId}/create")
     public String saveComment(@PathVariable Long postId, @Valid CommentCreateRequestDto requestDto, BindingResult bindingResult, Model model) {
         // 유효성 검증
+        // 해당 포스트 존재 여부 검증
+        Post post = postService.findByIdForComment(postId);
+
+        // 닉네임, 비밀번호, 내용 검증
         if (bindingResult.hasErrors()) {
             if (bindingResult.hasFieldErrors("nickname")) {
                 var errors = bindingResult.getFieldErrors("nickname");
@@ -39,7 +46,7 @@ public class CommentController {
             if (bindingResult.hasFieldErrors("content"))
                 model.addAttribute("errorMessage", "내용을 입력해주세요.");
         }
-        else  commentService.save(postId, requestDto);
+        else  commentService.save(post, requestDto);
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
         return "comments/comments";
@@ -51,5 +58,13 @@ public class CommentController {
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
         return "comments/comments";
+    }
+
+    // 첫번째 댓글, 댓글수 테스트
+    @GetMapping("/post/{postId}/comments/summary")
+    public String commentSummary(@PathVariable Long postId, Model model) {
+        model.addAttribute("comment",commentService.findFirstComment(postId));
+        model.addAttribute("count",commentService.countCommentsByPostId(postId));
+        return "comments/comment";
     }
 }

@@ -2,12 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test Post Create</title>
+    <title>게시글 상세 화면입니다.</title>
 </head>
 <body>
-<div th:text=" ${post.id}"></div>
-<div th:text=" ${post.content}"></div>
-<div th:text=" ${post.nickname}"></div>
-<div th:text=" ${post.createdAt}"></div>
+    <div th:text=" ${post.id}">게시글 id</div>
+    <div th:text=" ${post.content}">게시글 내용</div>
+    <div th:text=" ${post.nickname}">게시글 작성자이름</div>
+    <div th:text=" ${post.createdAt}">게시글 생성날짜</div>
+
+    <p>
+        조회수:
+        <span th:text="${post.viewCount}"></span>
+    </p>
+
+    <p>
+        댓글 수:
+        <span th:text="${commentCount}">0</span>
+    </p>
+
+    <div>
+        <h3>대표 댓글</h3>
+
+        <div th:if="${#lists.isEmpty(representativeComments)}">
+            아직 댓글이 없습니다.
+        </div>
+
+        <div th:each="comment : ${representativeComments}">
+            <p th:text="${comment.nickname}">닉네임</p>
+            <p th:text="${comment.content}">댓글 내용</p>
+        </div>
+</div>
 </body>
 </html>
