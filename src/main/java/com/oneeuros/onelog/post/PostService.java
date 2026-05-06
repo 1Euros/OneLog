@@ -2,14 +2,16 @@ package com.oneeuros.onelog.post;
 
 import com.oneeuros.onelog.board.Board;
 import com.oneeuros.onelog.board.BoardRepository;
+import com.oneeuros.onelog.comment.Comment;
 import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDto;
 import com.oneeuros.onelog.post.dto.PostListResponseDto;
+import com.oneeuros.onelog.post.dto.PostUpdateRequestDto;
 import com.oneeuros.onelog.post.dto.PostResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.oneeuros.onelog.common.PasswordUtils;
@@ -71,7 +73,7 @@ public class PostService {
 //        Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
         Page<Post> posts = postRepository.findAllWithBoardOrderByCreatedAtDesc(pageable); //fetch join을 이용함.
 
-        // Page<Post>를 Page<PostListResponseDTO>로 변경하기
+        // Page<Post>를 Page<PostListResponseDTO>로 변경함
         return posts.map(post -> new PostListResponseDto(
                 post.getId(),
                 post.getBoard().getId(),
@@ -82,6 +84,21 @@ public class PostService {
                 commentService.countCommentsByPostId(post.getId()),
                 post.getCreatedAt()
         ));
+    }
+
+    // 게시글 수정
+    @Transactional
+    public Post update(Long postId, PostUpdateRequestDto request){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        if (!PasswordUtils.checkPassword(request.password(), post.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        post.update(request.title(), request.content());
+
+        return post;
     }
 
 

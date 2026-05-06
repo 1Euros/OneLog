@@ -4,7 +4,7 @@ import com.oneeuros.onelog.comment.dto.CommentCreateRequestDto;
 import com.oneeuros.onelog.comment.dto.CommentUpdateRequestDto;
 import com.oneeuros.onelog.common.PasswordUtils;
 import com.oneeuros.onelog.post.Post;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
