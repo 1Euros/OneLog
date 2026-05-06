@@ -36,8 +36,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private int viewCount = 0;
 
-
-
     //게시판
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_id", nullable = false)
@@ -54,6 +52,11 @@ public class Post extends BaseEntity {
 
     public void increaseViewCount(){
         this.viewCount++;
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
 }
