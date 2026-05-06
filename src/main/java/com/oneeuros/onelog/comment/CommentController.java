@@ -52,4 +52,12 @@ public class CommentController {
         model.addAttribute("comments",comments);
         return "comments/comments";
     }
+
+    // 첫번째 댓글, 댓글수 테스트
+    @GetMapping("/post/{postId}/comments/summary")
+    public String commentSummary(@PathVariable Long postId, Model model) {
+        model.addAttribute("comment",commentService.findFirstComment(postId));
+        model.addAttribute("count",commentService.countCommentsByPostId(postId));
+        return "comments/comment";
+    }
 }

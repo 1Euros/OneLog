@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:if="${comment==null}">
+        <p>새로운 댓글을 적어주세요</p>
+    </div>
+    <div th:unless="${comment==null}">
+        <div th:text=" ${comment.id}"></div>
+        <div th:text=" ${comment.content}"></div>
+        <div th:text=" ${comment.nickname}"></div>
+        <div th:text=" ${comment.createdAt}"></div>
+        <div th:text=" ${count}"></div>
+    </div>
+</body>
+</html>
