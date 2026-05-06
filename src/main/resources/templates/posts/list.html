@@ -6,6 +6,7 @@
 </head>
 <body>
     <tr th:each="post : ${posts.content}">
+        <td th:text="${post.boardName}">게시판 이름</td>
         <td>
             <a th:href="@{/post/{postId}(postId=${post.postId})}"
                th:text="${post.title}">

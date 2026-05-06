@@ -2,6 +2,7 @@ package com.oneeuros.onelog.post;
 
 import com.oneeuros.onelog.board.Board;
 import com.oneeuros.onelog.board.BoardRepository;
+import com.oneeuros.onelog.board.BoardService;
 import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDTO;
 import com.oneeuros.onelog.post.dto.PostListResponseDTO;
@@ -68,11 +69,14 @@ public class PostService {
     public Page<PostListResponseDTO> findPostList(int page){
         Pageable pageable = PageRequest.of(page,4);
 
-        Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+//        Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+        Page<Post> posts = postRepository.findAllWithBoardOrderByCreatedAtDesc(pageable); //fetch join을 이용함.
 
         // Page<Post>를 Page<PostListResponseDTO>로 변경하기
         return posts.map(post -> new PostListResponseDTO(
                 post.getId(),
+                post.getBoard().getId(),
+                post.getBoard().getName(),
                 post.getTitle(),
                 post.getNickname(),
                 post.getViewCount(),

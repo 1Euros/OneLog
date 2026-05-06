@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 public record PostListResponseDTO(
         // 화면에 필요한 값만 담는 용도
         Long postId,
+        Long boardId,
+        String boardName,
         String title,
         String nickname,
         int viewCount,
