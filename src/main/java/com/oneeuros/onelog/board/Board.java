@@ -1,9 +1,12 @@
 package com.oneeuros.onelog.board;
 
 import com.oneeuros.onelog.common.BaseEntity;
+import com.oneeuros.onelog.post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "boards")
@@ -18,9 +21,10 @@ public class Board extends BaseEntity {
     @Column(nullable = false, length =30, unique = true)
     private String name;
 
+
+
     public Board(String name) {
         this.name = name;
-        // 앞 뒤 공백 방지
     }
 
     public void updateName(String name) {
