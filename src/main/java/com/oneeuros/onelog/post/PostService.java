@@ -36,9 +36,14 @@ public class PostService {
     }
 
         // 게시판 상세 조회
+        @Transactional
         public Post findById(Long postId) {
-            return postRepository.findById(postId)
+            Post post = postRepository.findById(postId)
                     .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+            post.increaseViewCount();
+
+            return post;
         }
 
 
