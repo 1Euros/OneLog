@@ -6,7 +6,7 @@
 </head>
 <body>
 <div>
-    <form method="post" th:action="@{/comment/{id}/update(id=${commentId})}">
+    <form method="post" th:action="@{/comment/{id}/update(id=${commentId}, postId=${postId})}">
         <h2>
             댓글 수정
         </h2>

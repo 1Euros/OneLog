@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,7 +47,7 @@ public class CommentController {
         else  commentService.save(post, request);
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
-        return "comments/comments";
+        return "redirect:/comment/post/%s/comments".formatted(postId);
     }
 
     // 댓글 목록 조회
@@ -63,12 +60,16 @@ public class CommentController {
 
     // 댓글 수정
     @PostMapping("/{commentId}/update")
-    public String updateComment(@PathVariable Long commentId, @Valid CommentUpdateRequestDto request, Model model) {
+    public String updateComment(@PathVariable Long commentId,
+                                @Valid CommentUpdateRequestDto request,
+                                @RequestParam Long postId,
+                                Model model
+) {
         // 수정 후 해당 댓글의 게시글 id 반환
-        Long postId = commentService.updateComment(commentId, request);
+        commentService.updateComment(commentId, request);
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
-        return "comments/comments";
+        return "redirect:/comment/post/%s/comments".formatted(postId);
     }
 
     // 첫번째 댓글, 댓글수 테스트

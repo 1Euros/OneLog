@@ -35,19 +35,17 @@ public class CommentService {
 
     // 댓글 수정
     @Transactional
-    public Long updateComment(Long commentId, CommentUpdateRequestDto request) {
+    public void updateComment(Long commentId, CommentUpdateRequestDto request) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 아이디의 댓글이 없습니다."));
         comment.updateContent(request.content());
-        return comment.getPost().getId();
     }
 
 
     // 댓글 삭제
     @Transactional
-    public Long deleteComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 아이디의 댓글이 없습니다."));
+    public void deleteComment(Long commentId) {
+        commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 아이디의 댓글이 없습니다."));
         commentRepository.deleteById(commentId);
-        return comment.getPost().getId();
     }
 
     // 해당 게시글의 최신순으로 첫번째 댓글 조회

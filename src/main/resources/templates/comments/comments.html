@@ -40,7 +40,7 @@
     <div th:text="${comment.content}" ></div>
     <div th:text="${comment.nickname}" ></div>
     <div th:text="${comment.createdAt}" ></div>
-    <button th:onclick="|location.href='@{/confirm/password/comment/{id}(id=${comment.id})}'|">
+    <button th:onclick="|location.href='@{/confirm/password/comment/{id}?postId={postId}(id=${comment.id}, postId=${postId})}'|">
         수정/삭제
     </button>
 </div>
