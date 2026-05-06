@@ -69,7 +69,7 @@
             <span th:text="${comment.content}">댓글 내용</span>
         </p>
     </div>
-    <button>댓글 더 보기</button>
+    <button th:onclick="|location.href='@{/comment/post/{id}/comments(id=${post.id})}'|">댓글 더 보기</button>
 </div>
 
 <hr>
