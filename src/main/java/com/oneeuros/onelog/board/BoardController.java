@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
@@ -93,6 +95,19 @@ public class BoardController {
         return "삭제 완료";
         // 추후 메인 페이지로 연결 필요
     }
+
+    // 게시판 목록 조회
+    @GetMapping("/boards")
+    public String getBoards(Model model){
+        List<Board> boards = boardService.findAllBoards();
+
+        if (boards.isEmpty()){
+            model.addAttribute("errorMessage", "게시판 목록을 불러올 수 없습니다");
+        }
+        model.addAttribute("boards",boards);
+        return "boards/list";
+    }
+
 
 
 

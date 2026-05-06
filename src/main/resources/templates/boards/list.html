@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 목록</title>
+</head>
+<body>
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}">
+        <p th:text="${errorMessage}" style="color: red;"></p>
+    </div>
+
+    <!-- 게시판 목록 -->
+    <ul>
+        <li th:each="board : ${boards}">
+            <!-- 추후 연결-->
+            <a th:href="@{/board/{id}(id=${board.id})}"
+               th:text="${board.name}">
+            </a>
+        </li>
+    </ul>
+
+    <!-- 게시판이 없을 경우 -->
+    <div th:if="${boards != null and #lists.isEmpty(boards)}">
+        <p>등록된 게시판이 없습니다.</p>
+    </div>
+
+</body>
+</html>
