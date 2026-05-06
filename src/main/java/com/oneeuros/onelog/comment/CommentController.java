@@ -45,7 +45,9 @@ public class CommentController {
                 model.addAttribute("errorMessage", "내용을 입력해주세요.");
         }
         else  commentService.save(post, request);
-        return "redirect:/comment/post/%s/comments".formatted(postId);
+        model.addAttribute("postId", postId);
+        model.addAttribute("comments", commentService.findComments(postId));
+        return "comments/comments :: commentSection";
     }
 
     // 댓글 목록 조회
@@ -54,6 +56,15 @@ public class CommentController {
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
         return "comments/comments";
+    }
+
+    //댓글 목록 플래터로 조회
+    @GetMapping("/post/{postId}/comments/fragment")
+    public String findCommentsFragment(@PathVariable Long postId, Model model) {
+        List<Comment> comments = commentService.findComments(postId);
+        model.addAttribute("comments",comments);
+        model.addAttribute("postId", postId);
+        return "comments/comments :: commentSection";   //fragment 반환
     }
 
     // 댓글 수정
