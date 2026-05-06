@@ -42,7 +42,7 @@ public class CommonController {
         PasswordAction pa = PasswordAction.validAction(action);
 
         //domain과 action에 따라 분기
-        if (pd == null && pa == null) throw new IllegalArgumentException("잘못된 경로입니다.");
+        if (pd == null || pa == null) throw new IllegalArgumentException("잘못된 경로입니다.");
         // 게시글일때 게시글 서비스의 수정/삭제 메서드로 이동
         if (pd == PasswordDomain.POST) {
             if (pa == PasswordAction.EDIT) {
