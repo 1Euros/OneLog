@@ -86,6 +86,25 @@ public class PostService {
         ));
     }
 
+    // 특정 게시판의 게시글 목록 조회
+    @Transactional(readOnly = true)
+    public Page<PostListResponseDto> findPostListByBoard(Long boardId, int page) {
+        Pageable pageable = PageRequest.of(page, 2);
+
+        Page<Post> posts = postRepository.findAllByBoardIdOrderByCreatedAtDesc(boardId, pageable);
+
+        return posts.map(post -> new PostListResponseDto(
+                post.getId(),
+                post.getBoard().getId(),
+                post.getBoard().getName(),
+                post.getTitle(),
+                post.getNickname(),
+                post.getViewCount(),
+                commentService.countCommentsByPostId(post.getId()),
+                post.getCreatedAt()
+        ));
+    }
+
     // 게시글 수정
     @Transactional
     public Post update(Long postId, PostUpdateRequestDto request){
