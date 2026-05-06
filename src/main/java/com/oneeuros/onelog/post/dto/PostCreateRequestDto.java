@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 // Request DTO
 // 게시글 생성요청시 받는 값들을 정리
 @Valid
-public record PostCreateRequestDTO(
+public record PostCreateRequestDto(
     @NotBlank(message = "닉네임을 입력해주세요.")
     @Size(max = 30, message = "닉네임은 30자 이하입니다.")
     String nickname,

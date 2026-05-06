@@ -1,17 +1,20 @@
 package com.oneeuros.onelog.post;
 
-//import com.oneeuros.onelog.common.PasswordValidator;
 import com.oneeuros.onelog.board.Board;
 import com.oneeuros.onelog.board.BoardRepository;
 import com.oneeuros.onelog.comment.CommentService;
-import com.oneeuros.onelog.common.PasswordUtils;
-import com.oneeuros.onelog.post.dto.PostCreateRequestDTO;
-import com.oneeuros.onelog.post.dto.PostResponseDTO;
+import com.oneeuros.onelog.post.dto.PostCreateRequestDto;
+import com.oneeuros.onelog.post.dto.PostListResponseDto;
+import com.oneeuros.onelog.post.dto.PostResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.oneeuros.onelog.common.PasswordUtils;
 
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,39 +26,62 @@ public class PostService {
 
     // post로 받는 save()
     @Transactional
-    public Post save(PostCreateRequestDTO request) {
+    public Post save(PostCreateRequestDto request) {
 
 
         Board board = boardRepository.findById(request.boardId()).orElseThrow(()->new IllegalArgumentException("해당 board id가 없습니다."));
+
+        // 비밀번호 인코딩
+        String encodedPassword = PasswordUtils.encodePassword(request.password());
 
         // post 저장
         Post post = new Post(
                 request.title(),
                 request.content(),
                 request.nickname(),
-                request.password(), board);
+                encodedPassword, board);
         return postRepository.save(post);
     }
 
-        // 게시글 상세 조회
-        @Transactional
-        public PostResponseDTO findById(Long postId) {
-            Post post = postRepository.findById(postId)
-                    .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+    // 게시글 상세 조회
+    @Transactional
+    public PostResponseDto findById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
-            post.increaseViewCount();
+        post.increaseViewCount();
 
-            return new PostResponseDTO(
-                    post,
-                    commentService.findFirstComment(postId),
-                    commentService.countCommentsByPostId(postId)
-            );
-        }
+        return new PostResponseDto(
+                post,
+                commentService.findFirstComment(postId),
+                commentService.countCommentsByPostId(postId)
+        );
+    }
 
 
-        // postId를 이용한 게시판 조회
+    // postId를 이용한 게시판 조회
     public Post findByIdForComment(Long postId){
         return postRepository.findById(postId).orElseThrow(()->new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+    }
+
+    // 전체 게시글 목록 불러오기 [15개씩 페이지처리]
+    public Page<PostListResponseDto> findPostList(int page){
+        Pageable pageable = PageRequest.of(page,4);
+
+//        Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+        Page<Post> posts = postRepository.findAllWithBoardOrderByCreatedAtDesc(pageable); //fetch join을 이용함.
+
+        // Page<Post>를 Page<PostListResponseDTO>로 변경하기
+        return posts.map(post -> new PostListResponseDto(
+                post.getId(),
+                post.getBoard().getId(),
+                post.getBoard().getName(),
+                post.getTitle(),
+                post.getNickname(),
+                post.getViewCount(),
+                commentService.countCommentsByPostId(post.getId()),
+                post.getCreatedAt()
+        ));
     }
 
 
