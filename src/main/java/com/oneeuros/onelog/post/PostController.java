@@ -1,19 +1,26 @@
 package com.oneeuros.onelog.post;
 
+import com.oneeuros.onelog.comment.Comment;
+import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDTO;
+import com.oneeuros.onelog.post.dto.PostResponseDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
+
 
 
     // 글 작성 처리
@@ -34,7 +41,20 @@ public class PostController {
 
         Post post = postService.save(request);
         model.addAttribute("post",post);
-        return "posts/detail";  // 생성 완료 후 작성된 글로 넘겨야하지만, test를 위해 posts/detail.html 추가
+        //return "posts/detail";  // 생성 완료 후 작성된 글로 넘겨야하지만, test를 위해 posts/detail.html 추가
+        return "redirect:/post/" + post.getId();
+    }
+
+    // 게시글 상세 조회
+    @GetMapping("/{postId}")
+    public String detailPost(@PathVariable Long postId, Model model){
+        PostResponseDTO response = postService.findById(postId);
+
+        model.addAttribute("post",response.post());
+        model.addAttribute("representativeComments",response.comment());
+        model.addAttribute("commentCount",response.commentCount());
+
+        return "posts/detail";
     }
 
 }
