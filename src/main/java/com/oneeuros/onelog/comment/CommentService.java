@@ -31,11 +31,20 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
+    // 댓글 목록 조회
     public List<Comment> findComments(Long postId) {
         // 해당 게시글 있는지 확인
         postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 아이디의 게시글이 없습니다."));
 
         return commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
 
+    }
+
+    public Comment findFirstComment(Long postId) {
+        return commentRepository.findFirstByPostIdOrderByCreatedAtDesc(postId).orElse(null);
+    }
+
+    public int countCommentsByPostId(Long postId) {
+        return commentRepository.countByPostId(postId);
     }
 }
