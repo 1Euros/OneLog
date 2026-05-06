@@ -41,6 +41,15 @@ public class CommentService {
         return comment.getPost().getId();
     }
 
+
+    // 댓글 삭제
+    @Transactional
+    public Long deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 아이디의 댓글이 없습니다."));
+        commentRepository.deleteById(commentId);
+        return comment.getPost().getId();
+    }
+
     // 해당 게시글의 최신순으로 첫번째 댓글 조회
     public Comment findFirstComment(Long postId) {
         return commentRepository.findFirstByPostIdOrderByCreatedAtDesc(postId).orElse(null);
