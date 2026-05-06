@@ -38,4 +38,13 @@ public class CommentService {
         return commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
 
     }
+
+    //수정/삭제시 비밀번호 확인
+    public Boolean confirmPassword(Long commentId, String password) {
+        //댓글 존재 확인
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 댓글이 존재하지 않습니다."));
+
+        // 비밀번호 확인
+        return PasswordUtils.checkPassword(password, comment.getPassword());
+    }
 }
