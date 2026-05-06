@@ -1,6 +1,5 @@
 package com.oneeuros.onelog.common;
 
-import com.oneeuros.onelog.comment.Comment;
 import com.oneeuros.onelog.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -9,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -67,8 +64,6 @@ public class CommonController {
             }else {
                 // 삭제 후 댓글 목록으로 이동
                 commentService.deleteComment(domainId);
-                List<Comment> comments = commentService.findComments(postId);
-                model.addAttribute("comments",comments);
                 return "redirect:/comment/post/%s/comments".formatted(postId);
             }
         }

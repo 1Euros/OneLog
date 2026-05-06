@@ -45,8 +45,6 @@ public class CommentController {
                 model.addAttribute("errorMessage", "내용을 입력해주세요.");
         }
         else  commentService.save(post, request);
-        List<Comment> comments = commentService.findComments(postId);
-        model.addAttribute("comments",comments);
         return "redirect:/comment/post/%s/comments".formatted(postId);
     }
 
@@ -62,13 +60,10 @@ public class CommentController {
     @PostMapping("/{commentId}/update")
     public String updateComment(@PathVariable Long commentId,
                                 @Valid CommentUpdateRequestDto request,
-                                @RequestParam Long postId,
-                                Model model
+                                @RequestParam Long postId
 ) {
         // 수정 후 해당 댓글의 게시글 id 반환
         commentService.updateComment(commentId, request);
-        List<Comment> comments = commentService.findComments(postId);
-        model.addAttribute("comments",comments);
         return "redirect:/comment/post/%s/comments".formatted(postId);
     }
 
