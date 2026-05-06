@@ -1,7 +1,10 @@
 package com.oneeuros.onelog.board;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +60,10 @@ public class BoardService {
 
         // 삭제
         boardRepository.delete(board);
+    }
+
+    @Transactional(readOnly=true)
+    public List<Board> findAllBoards(){
+        return boardRepository.findAll();
     }
 }
