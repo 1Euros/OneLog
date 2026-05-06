@@ -1,6 +1,7 @@
 package com.oneeuros.onelog.comment;
 
 import com.oneeuros.onelog.comment.dto.CommentCreateRequestDto;
+import com.oneeuros.onelog.comment.dto.CommentUpdateRequestDto;
 import com.oneeuros.onelog.post.Post;
 import com.oneeuros.onelog.post.PostService;
 import jakarta.validation.Valid;
@@ -24,7 +25,7 @@ public class CommentController {
     private final PostService postService;
 
     @PostMapping("/post/{postId}/create")
-    public String saveComment(@PathVariable Long postId, @Valid CommentCreateRequestDto requestDto, BindingResult bindingResult, Model model) {
+    public String saveComment(@PathVariable Long postId, @Valid CommentCreateRequestDto request, BindingResult bindingResult, Model model) {
         // 유효성 검증
         // 해당 포스트 존재 여부 검증
         Post post = postService.findByIdForComment(postId);
@@ -46,7 +47,7 @@ public class CommentController {
             if (bindingResult.hasFieldErrors("content"))
                 model.addAttribute("errorMessage", "내용을 입력해주세요.");
         }
-        else  commentService.save(post, requestDto);
+        else  commentService.save(post, request);
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
         return "comments/comments";
@@ -55,6 +56,16 @@ public class CommentController {
     // 댓글 목록 조회
     @GetMapping("/post/{postId}/comments")
     public String findComments(@PathVariable Long postId, Model model) {
+        List<Comment> comments = commentService.findComments(postId);
+        model.addAttribute("comments",comments);
+        return "comments/comments";
+    }
+
+    // 댓글 수정
+    @PostMapping("/{commentId}/update")
+    public String updateComment(@PathVariable Long commentId, @Valid CommentUpdateRequestDto request, Model model) {
+        // 수정 후 해당 댓글의 게시글 id 반환
+        Long postId = commentService.updateComment(commentId, request);
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
         return "comments/comments";
