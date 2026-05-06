@@ -1,6 +1,7 @@
 package com.oneeuros.onelog.comment;
 
 import com.oneeuros.onelog.common.BaseEntity;
+import com.oneeuros.onelog.post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,13 +25,15 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private Long postId =1L;  //임의의 부모테이블 아이디
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
 
-    public Comment (String nickname, String password, String content){
+    public Comment (String nickname, String password, String content, Post post){
         this.nickname = nickname;
         this.password = password;
         this.content = content;
+        this.post = post;
     }
 }
