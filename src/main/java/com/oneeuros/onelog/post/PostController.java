@@ -1,5 +1,7 @@
 package com.oneeuros.onelog.post;
 
+import com.oneeuros.onelog.comment.Comment;
+import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +13,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
+
 
 
     // 글 작성 처리
@@ -44,7 +50,16 @@ public class PostController {
     @GetMapping("/{postId}")
     public String detailPost(@PathVariable Long postId, Model model){
         Post post = postService.findById(postId);
+        // 최신순으로 comment 가져옴
+        List<Comment> comments =
+                commentService.findComments(postId);
+        // 대표 댓글 한개 가져옴
+        List<Comment> representativeComments = comments.stream().limit(1).toList();
+
         model.addAttribute("post",post);
+        model.addAttribute("representativeComments",representativeComments);
+        model.addAttribute("commentCount",comments.size());
+
         return "posts/detail";
     }
 

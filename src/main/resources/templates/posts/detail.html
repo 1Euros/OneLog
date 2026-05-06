@@ -5,9 +5,27 @@
     <title>Test Post Create</title>
 </head>
 <body>
-<div th:text=" ${post.id}"></div>
-<div th:text=" ${post.content}"></div>
-<div th:text=" ${post.nickname}"></div>
-<div th:text=" ${post.createdAt}"></div>
+    <div th:text=" ${post.id}"></div>
+    <div th:text=" ${post.content}"></div>
+    <div th:text=" ${post.nickname}"></div>
+    <div th:text=" ${post.createdAt}"></div>
+
+    <p>
+        댓글 수:
+        <span th:text="${commentCount}">0</span>
+    </p>
+
+    <div>
+        <h3>대표 댓글</h3>
+
+        <div th:if="${#lists.isEmpty(representativeComments)}">
+            아직 댓글이 없습니다.
+        </div>
+
+        <div th:each="comment : ${representativeComments}">
+            <p th:text="${comment.nickname}">닉네임</p>
+            <p th:text="${comment.content}">댓글 내용</p>
+        </div>
+</div>
 </body>
 </html>
