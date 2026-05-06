@@ -14,14 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
-    private final CommentService commentService;
 
 
 
@@ -47,27 +45,14 @@ public class PostController {
         return "redirect:/post/" + post.getId();
     }
 
-    // 게시판 상세 조회
+    // 게시글 상세 조회
     @GetMapping("/{postId}")
     public String detailPost(@PathVariable Long postId, Model model){
         PostResponseDTO response = postService.findById(postId);
 
-        // 대표 댓글 한개 가져옴
-        Comment representativeComments = commentService.findFirstComment(postId);
-
-        // 게시글의 댓글 수 조회
-        int commentCount = commentService.countCommentsByPostId(postId);
-
-
-//        // 최신순으로 comment 가져옴
-//        List<Comment> comments =
-//                commentService.findComments(postId);
-//
-//        List<Comment> representativeComments = comments.stream().limit(1).toList();
-
         model.addAttribute("post",response.post());
-        model.addAttribute("representativeComments",representativeComments);
-        model.addAttribute("commentCount",commentCount);
+        model.addAttribute("representativeComments",response.comment());
+        model.addAttribute("commentCount",response.commentCount());
 
         return "posts/detail";
     }
