@@ -20,6 +20,9 @@
             수정
         </button>
     </form>
+    <script th:if="${errorMessage != null}" th:inline="javascript">
+        alert(/*[[${errorMessage}]]*/)
+    </script>
 </div>
 </body>
 </html>

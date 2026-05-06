@@ -60,8 +60,21 @@ public class CommentController {
     @PostMapping("/{commentId}/update")
     public String updateComment(@PathVariable Long commentId,
                                 @Valid CommentUpdateRequestDto request,
-                                @RequestParam Long postId
+                                BindingResult bindingResult,
+                                @RequestParam Long postId,
+                                Model model
 ) {
+        if (bindingResult.hasFieldErrors("content")) {
+            var errors = bindingResult.getFieldErrors("content");
+            for (var error : errors) {
+                String code = error.getCode();
+                if ("NotBlank".equals(code)) {
+                    model.addAttribute("errorMessage", "내용을 입력해주세요.");
+                    model.addAttribute("postId", postId);
+                }
+            }
+            return "comments/edit-comment";
+        }
         // 수정 후 해당 댓글의 게시글 id 반환
         commentService.updateComment(commentId, request);
         return "redirect:/comment/post/%s/comments".formatted(postId);
