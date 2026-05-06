@@ -5,33 +5,21 @@
     <title>edit-comment</title>
 </head>
 <body>
-<form method="post" th:action="@{/comment/post/{id}/create(id=${postId})}">
-    <h2>
-        댓글 수정
-    </h2>
+<div>
+    <form method="post" th:action="@{/comment/{id}/update(id=${commentId})}">
+        <h2>
+            댓글 수정
+        </h2>
+        <label for="content">
+            내용 :
+        </label>
+        <input id="content" type="text" name="content">
+        <br>
 
-    <label for="nickname">
-        닉네임  :
-    </label>
-    <input id="nickname" type="text" name="nickname" value="익명">
-    <br>
-
-    <label for="password">
-        비밀번호 :
-    </label>
-    <input id="password" type="password" name="password" value="000000">
-    <br>
-
-    <label for="content">
-        내용 :
-    </label>
-    <input id="content" type="text" name="content">
-    <br>
-
-    <button>
-        제출
-    </button>
-</form>
+        <button>
+            수정
+        </button>
+    </form>
 </div>
 </body>
 </html>

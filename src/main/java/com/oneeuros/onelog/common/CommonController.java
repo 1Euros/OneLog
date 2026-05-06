@@ -4,13 +4,10 @@ import com.oneeuros.onelog.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.regex.Pattern;
 
 @Controller
 @RequiredArgsConstructor
@@ -57,7 +54,8 @@ public class CommonController {
             }
             // 비밀번호 맞을시 수정/삭제로 분기해서 해당창으로 이동
             if (pa == PasswordAction.EDIT) {
-                return null;
+                model.addAttribute("commentId", domainId);
+                return "comments/edit-comment";
             }else {
                 return null;
             }
