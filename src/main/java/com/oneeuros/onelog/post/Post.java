@@ -3,6 +3,7 @@ package com.oneeuros.onelog.post;
     Post Entity
  */
 
+import com.oneeuros.onelog.board.Board;
 import com.oneeuros.onelog.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,17 +39,17 @@ public class Post extends BaseEntity {
 
 
     //게시판
-/*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_id", nullable = false)
     private Board board;
-*/
 
-    public Post(String title, String content, String nickname, String password) {
+
+    public Post(String title, String content, String nickname, String password, Board board) {
         this.title = title;
         this.content = content;
         this.nickname = nickname;
         this.password = password;
+        this.board = board;
     }
 
     public void increaseViewCount(){
