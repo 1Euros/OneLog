@@ -12,8 +12,9 @@ import org.springframework.data.domain.Pageable;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.oneeuros.onelog.common.PasswordUtils;
 
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -30,12 +31,15 @@ public class PostService {
 
         Board board = boardRepository.findById(request.boardId()).orElseThrow(()->new IllegalArgumentException("해당 board id가 없습니다."));
 
+        // 비밀번호 인코딩
+        String encodedPassword = PasswordUtils.encodePassword(request.password());
+
         // post 저장
         Post post = new Post(
                 request.title(),
                 request.content(),
                 request.nickname(),
-                request.password(), board);
+                encodedPassword, board);
         return postRepository.save(post);
     }
 
