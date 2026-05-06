@@ -40,6 +40,9 @@
     <div th:text="${comment.content}" ></div>
     <div th:text="${comment.nickname}" ></div>
     <div th:text="${comment.createdAt}" ></div>
+    <button th:onclick="|location.href='@{/confirm/password/comment/{id}(id=${comment.id})}'|">
+        수정/삭제
+    </button>
 </div>
 <script th:if="${errorMessage != null}" th:inline="javascript">
     alert(/*[[${errorMessage}]]*/)

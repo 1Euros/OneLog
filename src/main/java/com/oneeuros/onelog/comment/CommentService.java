@@ -1,6 +1,7 @@
 package com.oneeuros.onelog.comment;
 
 import com.oneeuros.onelog.comment.dto.CommentCreateRequestDto;
+import com.oneeuros.onelog.comment.dto.CommentUpdateRequestDto;
 import com.oneeuros.onelog.common.PasswordUtils;
 import com.oneeuros.onelog.post.Post;
 import jakarta.transaction.Transactional;
@@ -17,12 +18,12 @@ public class CommentService {
 
     // 댓글 저장
     @Transactional
-    public void save(Post post, CommentCreateRequestDto requestDto) {
+    public void save(Post post, CommentCreateRequestDto request) {
         // 비밀번호 인코딩
-        String encodedPassword = PasswordUtils.encodePassword(requestDto.password());
+        String encodedPassword = PasswordUtils.encodePassword(request.password());
 
         // 데이터 저장
-        Comment comment = new Comment(requestDto.nickname(), encodedPassword, requestDto.content(), post);
+        Comment comment = new Comment(request.nickname(), encodedPassword, request.content(), post);
         commentRepository.save(comment);
     }
 
@@ -30,6 +31,14 @@ public class CommentService {
     public List<Comment> findComments(Long postId) {
         return commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
 
+    }
+
+    // 댓글 수정
+    @Transactional
+    public Long updateComment(Long commentId, CommentUpdateRequestDto request) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 아이디의 댓글이 없습니다."));
+        comment.updateContent(request.content());
+        return comment.getPost().getId();
     }
 
     // 해당 게시글의 최신순으로 첫번째 댓글 조회
@@ -40,5 +49,14 @@ public class CommentService {
     //해당 게시글의 댓글 수 조회
     public int countCommentsByPostId(Long postId) {
         return commentRepository.countByPostId(postId);
+    }
+
+    //수정/삭제시 비밀번호 확인
+    public Boolean confirmPassword(Long commentId, String password) {
+        //댓글 존재 확인
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 댓글이 존재하지 않습니다."));
+
+        // 비밀번호 확인
+        return PasswordUtils.checkPassword(password, comment.getPassword());
     }
 }
