@@ -3,16 +3,16 @@ package com.oneeuros.onelog.post;
 import com.oneeuros.onelog.comment.Comment;
 import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDTO;
+import com.oneeuros.onelog.post.dto.PostListResponseDTO;
 import com.oneeuros.onelog.post.dto.PostResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 @Controller
@@ -55,6 +55,19 @@ public class PostController {
         model.addAttribute("commentCount",response.commentCount());
 
         return "posts/detail";
+    }
+
+    // 게시글 전체 조회
+    @GetMapping
+    public String postList(
+            @RequestParam(defaultValue = "0") int page,
+            Model model
+    ){
+        Page<PostListResponseDTO> posts = postService.findPostList(page);
+
+        model.addAttribute("posts",posts);
+
+        return "posts/list";
     }
 
 }

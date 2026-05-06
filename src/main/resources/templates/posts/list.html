@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 목록을 보여주는 화면입니다.</title>
+</head>
+<body>
+    <tr th:each="post : ${posts.content}">
+        <td>
+            <a th:href="@{/post/{postId}(postId=${post.postId})}"
+               th:text="${post.title}">
+                제목
+            </a>
+        </td>
+        <td>
+            작성자이름 : <span th:text="${post.nickname}">익명</span><br>
+            댓글수 : <span th:text="${post.commentCount}">0</span><br>
+            조회수 : <span th:text="${post.viewCount}">0</span><br>
+            작성일시 : <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">05/06 14:30</span><br>
+        </td>
+    </tr>
+
+    <div>
+        <a th:if="${posts.hasPrevious()}"
+           th:href="@{/post(page=${posts.number - 1})}">
+            이전
+        </a>
+
+        <span>
+        <span th:text="${posts.number + 1}">1</span>
+        /
+        <span th:text="${posts.totalPages}">1</span>
+    </span>
+
+        <a th:if="${posts.hasNext()}"
+           th:href="@{/post(page=${posts.number + 1})}">
+            다음
+        </a>
+    </div>
+</body>
+</html>
