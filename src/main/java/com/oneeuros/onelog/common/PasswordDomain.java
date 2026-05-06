@@ -9,6 +9,6 @@ public enum PasswordDomain {
                 return d;
             }
         }
-        return null;
+        throw new IllegalArgumentException("잘못된 도메인: "+domain);
     }
 }
