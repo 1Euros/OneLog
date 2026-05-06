@@ -35,5 +35,11 @@ public class PostService {
         return postRepository.save(post);
     }
 
+        // 게시판 상세 조회
+        public Post findById(Long postId) {
+            return postRepository.findById(postId)
+                    .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+        }
+
 
 }
