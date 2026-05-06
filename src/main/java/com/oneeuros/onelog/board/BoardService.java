@@ -10,10 +10,6 @@ public class BoardService {
 
     @Transactional
     public Board save(String name){
-        if (name == null || name.trim().isEmpty()) {
-            throw new RuntimeException("게시판 이름은 필수입니다");
-        }
-        name = name.trim();
         if (boardRepository.existsByName(name)) {
             throw new IllegalArgumentException("이미 존재하는 게시판입니다");
         }
@@ -31,12 +27,6 @@ public class BoardService {
         if (boardId == 1L) {
             throw new IllegalArgumentException("기본 게시판은 수정할 수 없습니다");
         }
-
-        // 이름 검증
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("게시판 이름을 입력하세요");
-        }
-        name = name.trim();
 
         // 이름 중복 체크
         if (boardRepository.existsByName(name)) {
