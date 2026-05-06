@@ -1,6 +1,4 @@
 package com.oneeuros.onelog.board;
-
-import com.oneeuros.onelog.post.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +7,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final PostRepository postRepository;
 
     @Transactional
     public Board save(String name){
@@ -55,7 +52,7 @@ public class BoardService {
     @Transactional
     public void delete(Long boardId){
         // 게시판 존재 여부 검증
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findByIdWithPosts(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시판입니다"));
 
         // 기본 게시판 삭제 금지
@@ -64,7 +61,7 @@ public class BoardService {
         }
 
         // 게시글 존재 여부 확인
-        if(postRepository.existsByBoardId(boardId)){
+        if(!board.getPostlist().isEmpty()){
             throw new IllegalArgumentException("게시글이 존재하는 게시판은 삭제할 수 없습니다");
         }
 

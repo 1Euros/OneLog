@@ -21,7 +21,8 @@ public class Board extends BaseEntity {
     @Column(nullable = false, length =30, unique = true)
     private String name;
 
-
+    @OneToMany(mappedBy = "board")
+    private List<Post> postlist;
 
     public Board(String name) {
         this.name = name;
