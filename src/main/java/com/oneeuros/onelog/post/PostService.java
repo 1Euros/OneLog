@@ -2,11 +2,10 @@ package com.oneeuros.onelog.post;
 
 import com.oneeuros.onelog.board.Board;
 import com.oneeuros.onelog.board.BoardRepository;
-import com.oneeuros.onelog.board.BoardService;
 import com.oneeuros.onelog.comment.CommentService;
-import com.oneeuros.onelog.post.dto.PostCreateRequestDTO;
-import com.oneeuros.onelog.post.dto.PostListResponseDTO;
-import com.oneeuros.onelog.post.dto.PostResponseDTO;
+import com.oneeuros.onelog.post.dto.PostCreateRequestDto;
+import com.oneeuros.onelog.post.dto.PostListResponseDto;
+import com.oneeuros.onelog.post.dto.PostResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,7 @@ public class PostService {
 
     // post로 받는 save()
     @Transactional
-    public Post save(PostCreateRequestDTO request) {
+    public Post save(PostCreateRequestDto request) {
 
 
         Board board = boardRepository.findById(request.boardId()).orElseThrow(()->new IllegalArgumentException("해당 board id가 없습니다."));
@@ -46,13 +45,13 @@ public class PostService {
 
     // 게시글 상세 조회
     @Transactional
-    public PostResponseDTO findById(Long postId) {
+    public PostResponseDto findById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         post.increaseViewCount();
 
-        return new PostResponseDTO(
+        return new PostResponseDto(
                 post,
                 commentService.findFirstComment(postId),
                 commentService.countCommentsByPostId(postId)
@@ -66,14 +65,14 @@ public class PostService {
     }
 
     // 전체 게시글 목록 불러오기 [15개씩 페이지처리]
-    public Page<PostListResponseDTO> findPostList(int page){
+    public Page<PostListResponseDto> findPostList(int page){
         Pageable pageable = PageRequest.of(page,4);
 
 //        Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
         Page<Post> posts = postRepository.findAllWithBoardOrderByCreatedAtDesc(pageable); //fetch join을 이용함.
 
         // Page<Post>를 Page<PostListResponseDTO>로 변경하기
-        return posts.map(post -> new PostListResponseDTO(
+        return posts.map(post -> new PostListResponseDto(
                 post.getId(),
                 post.getBoard().getId(),
                 post.getBoard().getName(),

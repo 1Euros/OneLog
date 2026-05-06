@@ -1,12 +1,9 @@
 package com.oneeuros.onelog.post;
 
-import com.oneeuros.onelog.comment.Comment;
-import com.oneeuros.onelog.comment.CommentService;
-import com.oneeuros.onelog.post.dto.PostCreateRequestDTO;
-import com.oneeuros.onelog.post.dto.PostListResponseDTO;
-import com.oneeuros.onelog.post.dto.PostResponseDTO;
+import com.oneeuros.onelog.post.dto.PostCreateRequestDto;
+import com.oneeuros.onelog.post.dto.PostListResponseDto;
+import com.oneeuros.onelog.post.dto.PostResponseDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -26,7 +23,7 @@ public class PostController {
     // 글 작성 처리
     @PostMapping("/create")
     public String savePost(
-            @Valid PostCreateRequestDTO request,
+            @Valid PostCreateRequestDto request,
             BindingResult bindingResult,
             Model model
     ){
@@ -48,7 +45,7 @@ public class PostController {
     // 게시글 상세 조회
     @GetMapping("/{postId}")
     public String detailPost(@PathVariable Long postId, Model model){
-        PostResponseDTO response = postService.findById(postId);
+        PostResponseDto response = postService.findById(postId);
 
         model.addAttribute("post",response.post());
         model.addAttribute("representativeComments",response.comment());
@@ -63,7 +60,7 @@ public class PostController {
             @RequestParam(defaultValue = "0") int page,
             Model model
     ){
-        Page<PostListResponseDTO> posts = postService.findPostList(page);
+        Page<PostListResponseDto> posts = postService.findPostList(page);
 
         model.addAttribute("posts",posts);
 
