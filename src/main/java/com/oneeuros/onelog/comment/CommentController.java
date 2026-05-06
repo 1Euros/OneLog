@@ -20,12 +20,6 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @GetMapping("/post/{postId}/show/input")
-    public String showInputComment(@PathVariable Long postId, Model model) {
-        model.addAttribute("postId",postId);
-        return "comments/showInputComment";
-    }
-
     @PostMapping("/post/{postId}/create")
     public String saveComment(@PathVariable Long postId, @Valid CommentCreateRequestDto requestDto, BindingResult bindingResult, Model model) {
         // 유효성 검증
@@ -44,11 +38,10 @@ public class CommentController {
                 model.addAttribute("errorMessage", "비밀번호는 숫자 6자리여야 합니다.");
             if (bindingResult.hasFieldErrors("content"))
                 model.addAttribute("errorMessage", "내용을 입력해주세요.");
-
-            return "comments/showInputComment";
         }
-        Comment comment = commentService.save(postId, requestDto);
-        model.addAttribute("comment", comment);
+        else  commentService.save(postId, requestDto);
+        List<Comment> comments = commentService.findComments(postId);
+        model.addAttribute("comments",comments);
         return "comments/comments";
     }
 
@@ -57,6 +50,6 @@ public class CommentController {
     public String findComments(@PathVariable Long postId, Model model) {
         List<Comment> comments = commentService.findComments(postId);
         model.addAttribute("comments",comments);
-        return "comments/commentslist";
+        return "comments/comments";
     }
 }
