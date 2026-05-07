@@ -98,4 +98,12 @@ public class CommentController {
         model.addAttribute("count",commentService.countCommentsByPostId(postId));
         return "comments/comment";
     }
+
+    // 해당 게시글의 댓글 전체 삭제 테스트
+    @GetMapping("/post/{postId}/delete")
+    public String deleteCommentsByPostId(@PathVariable Long postId, Model model) {
+        commentService.deleteCommentsByPostId(postId);
+        model.addAttribute("comments",commentService.findComments(postId));
+        return "comments/comments";
+    }
 }
