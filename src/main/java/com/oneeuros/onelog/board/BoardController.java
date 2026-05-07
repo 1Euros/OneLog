@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -22,6 +23,26 @@ public class BoardController {
         // Validation을 위해 빈 DTO 객체를 모델에 담아 보냅니다.
         model.addAttribute("boardRequestDto", new BoardRequestDto(""));
         return "boards/create-form"; // 생성 화면(또는 플로팅 HTML) 반환
+    }
+
+    // 게시판 수정 화면 열기
+    @GetMapping("/update-open/{boardId}")
+    public String openUpdateForm(@PathVariable Long boardId, Model model, RedirectAttributes redirectAttributes){
+        try{
+            //서비스 호출 (존재하지 않으면 IllegalArgumentException 발생)
+            Board board = boardService.findById(boardId);
+
+            // 조회 성공 시 모델에 담기
+            model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+            model.addAttribute("boardId", boardId);
+
+            return "boards/update-form";
+
+        } catch (IllegalArgumentException e) {
+        // 서비스에서 던진 "존재하지 않는 게시판입니다" 메시지를 받아서 리다이렉트
+        redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        return "redirect:/"; //메인으로 이동 (추후 수정)
+        }
     }
 
     //post 방식으로 수정

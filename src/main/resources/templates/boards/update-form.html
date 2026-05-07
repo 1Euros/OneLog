@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 수정/삭제</title>
+    <style>
+        #update-board-modal {
+            position: relative; width: 350px; padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #fff;
+            margin: 100px auto; border: 1px solid #eee;
+        }
+        .close-btn {
+            position: absolute; top: 15px; right: 15px; background: none;
+            border: none; font-size: 24px; cursor: pointer; color: #aaa;
+        }
+        .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+        input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .button-group { margin-top: 20px; display: flex; justify-content: space-between; }
+        .update-btn { background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .delete-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="update-board-modal">
+    <!-- 취소(X) 버튼 -->
+    <button type="button" class="close-btn" onclick="history.back()">&times;</button>
+
+    <h2>게시판 수정/삭제</h2>
+
+    <form th:object="${boardRequestDto}" method="post">
+        <div>
+            <label for="name" class="visually-hidden">게시판 이름 수정</label>
+            <!-- 기존 이름이 th:field를 통해 input에 자동으로 채워집니다 -->
+            <input type="text" th:field="*{name}" id="name" placeholder="새 이름을 입력하세요" required>
+
+            <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red; font-size: 0.85rem; margin-top: 8px;"></p>
+        </div>
+
+        <div class="button-group">
+            <!-- 수정 버튼: action을 /board/update/{id}로 설정 -->
+            <button type="submit" th:formaction="@{/board/update/{id}(id=${boardId})}" class="update-btn">수정</button>
+
+            <!-- 삭제 버튼: action을 /board/delete/{id}로 설정 -->
+            <button type="submit" th:formaction="@{/board/delete/{id}(id=${boardId})}"
+                    class="delete-btn" onclick="return confirm('정말로 삭제하시겠습니까?')">삭제</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
