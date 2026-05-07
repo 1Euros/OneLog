@@ -27,9 +27,14 @@
 
             <!-- 상단 -->
             <div>
-                <a th:href="${selectedBoardId != null}
-            ? @{/post/board/{boardId}/posts(boardId=${selectedBoardId})}
-            : @{/post}"
+                <a th:if="${selectedBoardId != null}"
+                   th:href="@{/post/board/{boardId}/posts(boardId=${selectedBoardId})}"
+                   class="btn btn-ghost mb-4">
+                    ← 목록으로
+                </a>
+
+                <a th:unless="${selectedBoardId != null}"
+                   th:href="@{/post}"
                    class="btn btn-ghost mb-4">
                     ← 목록으로
                 </a>
