@@ -39,7 +39,6 @@
     </div>
     <h2>댓글</h2>
     <div th:each="comment:${comments}" th:style="'margin-left: ' + (${comment.depth} * 50) + 'px'">
-        <div th:text="${comment.id}" ></div>
         <div th:if="${comment.isDeleted==true}" >
             <p> 삭제된 댓글입니다.</p>
         </div>
@@ -48,12 +47,6 @@
             <div th:text="${comment.nickname}" ></div>
             <div th:text="${comment.createdAt}" ></div>
         </div>
-        <div th:if="${comment.parent != null}">
-            <div th:text="${comment.parent.id}" ></div>
-        </div>
-        <div th:text="${comment.depth}" ></div>
-        <div th:text="${comment.groupId}" ></div>
-        <div th:text="${comment.groupOrder}" ></div>
         <button th:onclick="|location.href='@{/confirm/password/comment/{id}?postId={postId}(id=${comment.id}, postId=${postId})}'|">
             수정/삭제
         </button>
