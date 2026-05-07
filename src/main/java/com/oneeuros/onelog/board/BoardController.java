@@ -16,6 +16,14 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
 
+    // 게시판 생성 화면 열기
+    @GetMapping("/create-open")
+    public String openCreateForm(Model model) {
+        // Validation을 위해 빈 DTO 객체를 모델에 담아 보냅니다.
+        model.addAttribute("boardRequestDto", new BoardRequestDto(""));
+        return "boards/create-form"; // 생성 화면(또는 플로팅 HTML) 반환
+    }
+
     //post 방식으로 수정
     //게시판 생성
     @PostMapping ("/create")
