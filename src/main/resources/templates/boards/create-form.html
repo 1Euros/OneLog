@@ -1,89 +1,24 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>게시판 생성</title>
-    <style>
-        #create-board-modal {
-            position: relative;
-            width: 350px;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            background-color: #fff;
-            margin: 100px auto;
-            border: 1px solid #eee;
-        }
-
-        /* 우측 상단 X 버튼 */
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #aaa;
-            line-height: 1;
-        }
-
-        .close-btn:hover { color: #333; }
-
-        h2 { margin-top: 0; font-size: 1.2rem; }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box; /* 패딩이 넓이에 포함되도록 */
-        }
-
-        .button-group {
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .submit-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .submit-btn:hover { background-color: #0056b3; }
-    </style>
-</head>
+<head><meta charset="UTF-8"></head>
 <body>
 
-<div id="create-board-modal" th:fragment="createForm">
-    <!-- 1. X 버튼: 클릭 시 이전 화면으로 돌아가며 플로팅 닫기 효과 -->
-    <button type="button" class="close-btn" onclick="history.back()">&times;</button>
-
-    <h2>게시판 이름</h2>
-
-    <!-- 2. POST 요청 연결: /board/create 로 name 파라미터 전송 -->
+<div id="create-board-modal" th:fragment="createForm" class="position-relative">
+    <h6 class="fw-bold mb-3">게시판 추가</h6>
+    <div th:if="${errorMessage != null}" class="alert alert-danger py-2 small mb-2" th:text="${errorMessage}"></div>
     <form th:action="@{/board/create}" th:object="${boardRequestDto}" method="post">
-        <div>
-            <!-- th:field가 자동으로 name="name"과 id="name"을 생성함 -->
+        <div class="mb-3">
             <input type="text"
                    th:field="*{name}"
+                   class="form-control form-control-sm"
                    placeholder="게시판 이름을 입력하세요"
                    required>
-
-            <!-- 서버 검증 에러 메시지 출력 -->
-            <p th:if="${errorMessage!= null}"
-               th:text="${errorMessage}"
-               style="color: red; font-size: 0.85rem; margin-top: 8px;"></p>
         </div>
-
-        <div class="button-group">
-            <!-- 3. 추가 버튼: 폼의 데이터를 서버로 제출(Submit) -->
-            <button type="submit" class="submit-btn">추가</button>
+        <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm close-btn">취소</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg me-1"></i>추가
+            </button>
         </div>
     </form>
 </div>

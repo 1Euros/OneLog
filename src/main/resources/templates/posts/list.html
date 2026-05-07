@@ -2,136 +2,147 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>게시글 목록</title>
+    <title>OneLog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
+        body { background-color: #f8f9fa; }
         #update-board-modal {
-            position: relative; width: 350px; padding: 25px; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #fff; border: 1px solid #eee;
+            position: relative; width: 380px; padding: 28px; border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); background-color: #fff; border: 1px solid #dee2e6;
         }
         #update-board-modal .close-btn {
-            position: absolute; top: 15px; right: 15px; background: none;
-            border: none; font-size: 24px; cursor: pointer; color: #aaa;
+            position: absolute; top: 12px; right: 12px; background: none;
+            border: none; font-size: 20px; cursor: pointer; color: #aaa;
         }
-        #update-board-modal input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        #update-board-modal .button-group { margin-top: 20px; display: flex; justify-content: space-between; }
-        #update-board-modal .update-btn { background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-        #update-board-modal .delete-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        #update-board-modal input[type="text"] {
+            width: 100%; padding: 8px 12px; margin-top: 8px; border: 1px solid #dee2e6;
+            border-radius: 6px; box-sizing: border-box;
+        }
+        #update-board-modal .button-group { margin-top: 16px; display: flex; justify-content: space-between; }
+        #update-board-modal .update-btn { background-color: #0d6efd; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        #update-board-modal .delete-btn { background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+        .post-row:hover { background-color: #f1f3f5; }
+        .nav-link:hover { background-color: #e9ecef !important; }
     </style>
 </head>
 <body>
-<div style="display:flex;">
-    <!-- 왼쪽 사이드바 -->
-    <div style="width:200px; min-height:100vh; border-right:1px solid #ccc; padding:10px; position:sticky; top:0;">
-        <div th:insert="~{fragments/layout :: sidebar}"></div>
-    </div>
 
-    <!-- 기존 본문 그대로 -->
-    <div style="flex:1; padding:20px;">
-        <h1 th:if="${board != null}" th:text="${board.name + ' 게시글 목록'}">
-            게시판 게시글 목록
-        </h1>
+<div th:insert="~{fragments/layout :: header}"></div>
 
-        <h1 th:if="${board == null}">
-            전체 게시글 목록
-        </h1>
+<div class="d-flex" style="min-height: calc(100vh - 56px - 52px);">
+    <div th:insert="~{fragments/layout :: sidebar}"></div>
 
-        <div>
-            <button th:if="${board != null}" th:onclick="|location.href='@{/post/create(boardId=${board.id})}'|">
-                글쓰기
-            </button>
-            <button th:unless="${board != null}" onclick="location.href='/post/create'">
-                글쓰기
-            </button>
-            <button th:if="${board != null}" id="updateBoardBtn" th:data-board-id="${board.id}">
-                수정/삭제
-            </button>
-
+    <main class="flex-grow-1 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">
+                <span th:if="${board != null}" th:text="${board.name + ' 게시글 목록'}"></span>
+                <span th:if="${board == null}">전체 게시글 목록</span>
+            </h4>
+            <div class="d-flex gap-2">
+                <button th:if="${board != null}"
+                        th:value="@{/post/create(boardId=${board?.id})}"
+                        onclick="location.href=this.value"
+                        class="btn btn-primary btn-sm">
+                    <i class="bi bi-pencil-square me-1"></i>글쓰기
+                </button>
+                <button th:if="${board == null}"
+                        onclick="location.href='/post/create'"
+                        class="btn btn-primary btn-sm">
+                    <i class="bi bi-pencil-square me-1"></i>글쓰기
+                </button>
+                <button th:if="${board != null}" id="updateBoardBtn"
+                        th:data-board-id="${board.id}"
+                        class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-gear me-1"></i>수정/삭제
+                </button>
+            </div>
         </div>
 
-        <hr>
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div th:if="${posts.content.isEmpty()}" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                    아직 게시글이 없습니다.
+                </div>
 
-        <div th:if="${posts.content.isEmpty()}">
-            <p>아직 게시글이 없습니다.</p>
+                <table th:if="${!posts.content.isEmpty()}" class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4" style="width:120px;">게시판</th>
+                            <th>제목</th>
+                            <th style="width:220px;">작성 정보</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="post : ${posts.content}" class="post-row align-middle">
+                        <td class="ps-4">
+                            <a th:href="@{/post/board/{boardId}/posts(boardId=${post.boardId})}"
+                               th:text="${post.boardName}"
+                               class="badge bg-primary text-decoration-none"></a>
+                        </td>
+                        <td>
+                            <a th:href="@{/post/{postId}(postId=${post.postId})}"
+                               th:text="${post.title}"
+                               class="text-dark text-decoration-none fw-medium"></a>
+                        </td>
+                        <td class="text-muted small">
+                            <i class="bi bi-person me-1"></i><span th:text="${post.nickname}"></span>
+                            <span class="mx-2">·</span>
+                            <i class="bi bi-chat me-1"></i><span th:text="${post.commentCount}"></span>
+                            <span class="mx-2">·</span>
+                            <i class="bi bi-eye me-1"></i><span th:text="${post.viewCount}"></span>
+                            <span class="mx-2">·</span>
+                            <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <table th:if="${!posts.content.isEmpty()}">
-            <tbody>
-            <tr th:each="post : ${posts.content}">
-                <td>
-                    <a th:href="@{/post/board/{boardId}/posts(boardId=${post.boardId})}"
-                       th:text="${post.boardName}">
-                        게시판 이름
-                    </a>
-                </td>
-
-                <td>
-                    <a th:href="@{/post/{postId}(postId=${post.postId})}"
-                       th:text="${post.title}">
-                        제목
-                    </a>
-                </td>
-
-                <td>
-                    작성자이름 : <span th:text="${post.nickname}">익명</span><br>
-                    댓글수 : <span th:text="${post.commentCount}">0</span><br>
-                    조회수 : <span th:text="${post.viewCount}">0</span><br>
-                    작성일시 :
-                    <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">
-                        05/06 14:30
-                    </span><br>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <hr>
-
-        <!-- 특정 게시판 목록 페이징 -->
-        <div th:if="${board != null}">
-            <a th:if="${posts.hasPrevious()}"
-               th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}">
-                이전
-            </a>
-
-            <span>
-                <span th:text="${posts.number + 1}">1</span>
-                /
-                <span th:text="${posts.totalPages}">1</span>
-            </span>
-
-            <a th:if="${posts.hasNext()}"
-               th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}">
-                다음
-            </a>
+        <div class="d-flex justify-content-center mt-3">
+            <nav th:if="${board != null}">
+                <ul class="pagination pagination-sm">
+                    <li class="page-item" th:classappend="${!posts.hasPrevious()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}">이전</a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link" th:text="${posts.number + 1} + ' / ' + ${posts.totalPages}"></span>
+                    </li>
+                    <li class="page-item" th:classappend="${!posts.hasNext()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}">다음</a>
+                    </li>
+                </ul>
+            </nav>
+            <nav th:if="${board == null}">
+                <ul class="pagination pagination-sm">
+                    <li class="page-item" th:classappend="${!posts.hasPrevious()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/post(page=${posts.number - 1})}">이전</a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link" th:text="${posts.number + 1} + ' / ' + ${posts.totalPages}"></span>
+                    </li>
+                    <li class="page-item" th:classappend="${!posts.hasNext()} ? 'disabled'">
+                        <a class="page-link" th:href="@{/post(page=${posts.number + 1})}">다음</a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-
-        <!-- 전체 게시글 목록 페이징 -->
-        <div th:if="${board == null}">
-            <a th:if="${posts.hasPrevious()}"
-               th:href="@{/post(page=${posts.number - 1})}">
-                이전
-            </a>
-
-            <span>
-                <span th:text="${posts.number + 1}">1</span>
-                /
-                <span th:text="${posts.totalPages}">1</span>
-            </span>
-
-            <a th:if="${posts.hasNext()}"
-               th:href="@{/post(page=${posts.number + 1})}">
-                다음
-            </a>
-        </div>
-    </div>
+    </main>
 </div>
 
 <!-- 게시판 수정/삭제 모달 -->
 <div id="updateBoardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-     background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
-    <div id="updateBoardModalContent"></div>
+     background:rgba(0,0,0,0.5); z-index:1050; justify-content:center; align-items:center;">
+    <div class="bg-white rounded shadow p-4" style="width:380px; position:relative;">
+        <div id="updateBoardModalContent"></div>
+    </div>
 </div>
 
+<div th:insert="~{fragments/layout :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:if="${board != null}" th:inline="javascript">
     const boardId = /*[[${board.id}]]*/ null;
 
@@ -146,20 +157,13 @@
         document.querySelector('.close-btn')?.addEventListener('click', () => {
             document.getElementById('updateBoardModal').style.display = 'none';
         });
-
         document.querySelector('#updateBoardModalContent form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const action = e.submitter?.getAttribute('formaction') || e.target.action;
-
             if (e.submitter?.classList.contains('delete-btn')) {
                 if (!confirm('정말로 삭제하시겠습니까?')) return;
             }
-
-            const res = await fetch(action, {
-                method: 'POST',
-                body: new FormData(e.target)
-            });
-
+            const res = await fetch(action, { method: 'POST', body: new FormData(e.target) });
             if (!res.redirected) {
                 document.getElementById('updateBoardModalContent').innerHTML = await res.text();
                 attachUpdateModalListeners();
@@ -170,6 +174,5 @@
         });
     }
 </script>
-
 </body>
 </html>
