@@ -3,59 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <title>게시글 수정</title>
+  <link rel="stylesheet" th:href="@{/css/common.css}">
 </head>
 <body>
 
-<div th:fragment="editPostSection">
-<h2>게시글 수정</h2>
-<div>
-  <p>
-    <strong>작성자 이름 :</strong>
-    <span th:text="${post.nickname}">작성자</span>
-  </p>
-</div>
-<hr>
+<div th:fragment="editPostSection" class="card bg-base-100 shadow-none">
 
-<form th:action="@{/post/update/{postId}(postId=${post.id})}" method="post">
+  <div class="card-body">
 
-  <label>게시판</label>
-  <select name="boardId">
-    <option th:each="board : ${boards}"
-            th:value="${board.id}"
-            th:text="${board.name}"
-            th:selected="${board.id == post.board.id}">
-    </option>
-  </select>
+    <h2 class="card-title">게시글 수정</h2>
 
-  <div>
-    <label for="title">제목</label>
-    <input id="title"
-           type="text"
-           name="title"
-           th:value="${post.title}"
-           maxlength="100"
-           required>
+    <div class="text-sm text-base-content/60">
+      작성자 :
+      <span class="font-semibold text-base-content" th:text="${post.nickname}">
+                작성자
+            </span>
+    </div>
+
+    <form th:action="@{/post/update/{postId}(postId=${post.id})}"
+          method="post"
+          class="space-y-4 mt-2">
+
+      <div>
+        <label class="label">
+          <span class="label-text">게시판</span>
+        </label>
+
+        <select name="boardId" class="select select-bordered w-full">
+          <option th:each="board : ${boards}"
+                  th:value="${board.id}"
+                  th:text="${board.name}"
+                  th:selected="${board.id == post.board.id}">
+            게시판 이름
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label class="label" for="title">
+          <span class="label-text">제목</span>
+        </label>
+
+        <input id="title"
+               type="text"
+               name="title"
+               th:value="${post.title}"
+               maxlength="100"
+               required
+               class="input input-bordered w-full">
+      </div>
+
+      <div>
+        <label class="label" for="content">
+          <span class="label-text">내용</span>
+        </label>
+
+        <textarea id="content"
+                  name="content"
+                  rows="8"
+                  required
+                  class="textarea textarea-bordered w-full"
+                  th:text="${post.content}"></textarea>
+      </div>
+
+      <div class="card-actions justify-end gap-2">
+        <button type="button" class="cancel-edit-btn btn btn-ghost">
+          취소
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+          수정 완료
+        </button>
+      </div>
+
+    </form>
+
   </div>
-
-  <br>
-
-  <div>
-    <label for="content">내용</label><br>
-    <textarea id="content"
-              name="content"
-              rows="10"
-              cols="60"
-              required
-              th:text="${post.content}"></textarea>
-  </div>
-
-  <br>
-
-  <button type="submit">수정 완료</button>
-
-  <button type="button" class="cancel-edit-btn">취소</button>
-
-</form>
 </div>
 
 </body>

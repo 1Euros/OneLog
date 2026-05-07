@@ -1,11 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>오류 안내</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
-    <h2>error test</h2>
-    <p th:text="${errorMessage}"></p>
+
+<body class="bg-base-200 min-h-screen">
+
+<div class="flex min-h-screen">
+
+    <!-- 왼쪽 사이드바 -->
+    <aside class="w-64 min-h-screen bg-base-100 border-r border-base-300 p-4 sticky top-0">
+        <div th:insert="~{fragments/layout :: sidebar}"></div>
+    </aside>
+
+    <!-- 본문 -->
+    <main class="flex-1 p-8">
+        <div class="max-w-2xl mx-auto">
+
+            <div class="card bg-base-100 shadow-sm border border-base-300">
+                <div class="card-body text-center space-y-4">
+
+                    <div class="mx-auto w-16 h-16 rounded-full bg-error/10 flex items-center justify-center">
+                        <span class="text-3xl">!</span>
+                    </div>
+
+                    <div>
+                        <h1 class="text-2xl font-bold text-error">
+                            요청을 처리할 수 없습니다
+                        </h1>
+
+                        <p class="text-base-content/60 mt-2">
+                            입력값을 다시 확인해주세요.
+                        </p>
+                    </div>
+
+                    <div th:if="${errorMessage != null}" class="alert alert-error text-left">
+                        <span th:text="${errorMessage}">
+                            오류 메시지
+                        </span>
+                    </div>
+
+                    <div th:unless="${errorMessage != null}" class="alert">
+                        <span>
+                            알 수 없는 오류가 발생했습니다.
+                        </span>
+                    </div>
+
+                    <div class="card-actions justify-center gap-2 pt-2">
+                        <button type="button"
+                                onclick="history.back()"
+                                class="btn btn-ghost">
+                            이전 화면으로
+                        </button>
+
+                        <a href="/post" class="btn btn-primary">
+                            목록으로
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
 </body>
 </html>

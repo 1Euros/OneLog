@@ -1,154 +1,211 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" data-theme="cupcake">
 <head>
     <meta charset="UTF-8">
     <title>게시글 목록</title>
-    <style>
-        #update-board-modal {
-            position: relative; width: 350px; padding: 25px; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #fff; border: 1px solid #eee;
-        }
-        #update-board-modal .close-btn {
-            position: absolute; top: 15px; right: 15px; background: none;
-            border: none; font-size: 24px; cursor: pointer; color: #aaa;
-        }
-        #update-board-modal input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        #update-board-modal .button-group { margin-top: 20px; display: flex; justify-content: space-between; }
-        #update-board-modal .update-btn { background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-        #update-board-modal .delete-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
-<div style="display:flex;">
+
+<body class="bg-base-200 min-h-screen flex flex-col">
+
+<div th:insert="~{fragments/layout :: header}"></div>
+
+<div class="flex flex-1">
+
     <!-- 왼쪽 사이드바 -->
-    <div style="width:200px; min-height:100vh; border-right:1px solid #ccc; padding:10px; position:sticky; top:0;">
+    <aside class="w-64 bg-base-100 border-r border-base-300 p-4 sticky top-16 self-start min-h-[calc(100vh-4rem)]">
         <div th:insert="~{fragments/layout :: sidebar}"></div>
-    </div>
+    </aside>
 
-    <!-- 기존 본문 그대로 -->
-    <div style="flex:1; padding:20px;">
-        <h1 th:if="${board != null}" th:text="${board.name + ' 게시글 목록'}">
-            게시판 게시글 목록
-        </h1>
+    <!-- 본문 -->
+    <main class="flex-1 p-8">
+        <div class="max-w-5xl mx-auto space-y-6">
 
-        <h1 th:if="${board == null}">
-            전체 게시글 목록
-        </h1>
+            <!-- 상단 제목 / 버튼 -->
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 th:if="${board != null}"
+                        th:text="${board.name + ' 게시글 목록'}"
+                        class="text-3xl font-bold">
+                        게시판 게시글 목록
+                    </h1>
 
-        <div>
-            <button th:if="${board != null}" th:onclick="|location.href='@{/post/create(boardId=${board.id})}'|">
-                글쓰기
-            </button>
-            <button th:unless="${board != null}" onclick="location.href='/post/create'">
-                글쓰기
-            </button>
-            <button th:if="${board != null}" id="updateBoardBtn" th:data-board-id="${board.id}">
-                수정/삭제
-            </button>
+                    <h1 th:if="${board == null}"
+                        class="text-3xl font-bold">
+                        전체 게시글 목록
+                    </h1>
 
-        </div>
+                    <p class="text-sm text-base-content/60 mt-2">
+                        OneLog 게시글을 확인하고 새 글을 작성할 수 있습니다.
+                    </p>
+                </div>
 
-        <hr>
+                <div class="flex gap-2">
+                    <button th:if="${board != null}"
+                            th:onclick="|location.href='@{/post/create(boardId=${board.id})}'|"
+                            class="btn btn-primary">
+                        글쓰기
+                    </button>
 
-        <div th:if="${posts.content.isEmpty()}">
-            <p>아직 게시글이 없습니다.</p>
-        </div>
+                    <button th:unless="${board != null}"
+                            onclick="location.href='/post/create'"
+                            class="btn btn-primary">
+                        글쓰기
+                    </button>
 
-        <table th:if="${!posts.content.isEmpty()}">
-            <tbody>
-            <tr th:each="post : ${posts.content}">
-                <td>
-                    <a th:href="@{/post/board/{boardId}/posts(boardId=${post.boardId})}"
-                       th:text="${post.boardName}">
-                        게시판 이름
+                    <button th:if="${board != null}"
+                            id="updateBoardBtn"
+                            th:data-board-id="${board.id}"
+                            class="btn btn-outline btn-error">
+                        수정/삭제
+                    </button>
+                </div>
+            </div>
+
+            <!-- 게시글 없음 -->
+            <div th:if="${posts.content.isEmpty()}" class="alert bg-base-100 shadow-sm">
+                <span>아직 게시글이 없습니다.</span>
+            </div>
+
+            <!-- 게시글 목록 -->
+            <div th:if="${!posts.content.isEmpty()}" class="space-y-3">
+
+                <div th:each="post : ${posts.content}"
+                     class="card bg-base-100 shadow-sm border border-base-300">
+
+                    <div class="card-body">
+                        <div class="flex justify-between gap-6">
+
+                            <!-- 게시글 정보 -->
+                            <div class="space-y-2">
+                                <a th:href="@{/post/board/{boardId}/posts(boardId=${post.boardId})}"
+                                   th:text="${post.boardName}"
+                                   class="badge badge-outline">
+                                    게시판 이름
+                                </a>
+
+                                <h2 class="card-title text-xl">
+                                    <a th:href="@{/post/{postId}(postId=${post.postId})}"
+                                       th:text="${post.title}"
+                                       class="hover:underline">
+                                        제목
+                                    </a>
+                                </h2>
+
+                                <p class="text-sm text-base-content/70">
+                                    작성자 :
+                                    <span th:text="${post.nickname}">익명</span>
+                                </p>
+                            </div>
+
+                            <!-- 메타 정보 -->
+                            <div class="text-sm text-right text-base-content/70 space-y-1 min-w-36">
+                                <p>
+                                    댓글수 :
+                                    <span th:text="${post.commentCount}">0</span>
+                                </p>
+
+                                <p>
+                                    조회수 :
+                                    <span th:text="${post.viewCount}">0</span>
+                                </p>
+
+                                <p>
+                                    작성일시 :
+                                    <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">
+                                        05/06 14:30
+                                    </span>
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 페이징 -->
+            <div th:if="${posts.totalPages > 0}" class="flex justify-center pt-4">
+                <div class="join">
+
+                    <!-- 특정 게시판 이전 -->
+                    <a th:if="${board != null and posts.hasPrevious()}"
+                       th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}"
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
+                        이전
                     </a>
-                </td>
 
-                <td>
-                    <a th:href="@{/post/{postId}(postId=${post.postId})}"
-                       th:text="${post.title}">
-                        제목
+                    <!-- 전체 게시글 이전 -->
+                    <a th:if="${board == null and posts.hasPrevious()}"
+                       th:href="@{/post(page=${posts.number - 1})}"
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
+                        이전
                     </a>
-                </td>
 
-                <td>
-                    작성자이름 : <span th:text="${post.nickname}">익명</span><br>
-                    댓글수 : <span th:text="${post.commentCount}">0</span><br>
-                    조회수 : <span th:text="${post.viewCount}">0</span><br>
-                    작성일시 :
-                    <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">
-                        05/06 14:30
-                    </span><br>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                    <button type="button"
+                            class="join-item btn pointer-events-none bg-base-300 text-base-content border-base-300 font-semibold">
+                        <span th:text="${posts.number + 1}">1</span>
+                        /
+                        <span th:text="${posts.totalPages}">1</span>
+                    </button>
 
-        <hr>
+                    <!-- 특정 게시판 다음 -->
+                    <a th:if="${board != null and posts.hasNext()}"
+                       th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}"
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
+                        다음
+                    </a>
 
-        <!-- 특정 게시판 목록 페이징 -->
-        <div th:if="${board != null}">
-            <a th:if="${posts.hasPrevious()}"
-               th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}">
-                이전
-            </a>
+                    <!-- 전체 게시글 다음 -->
+                    <a th:if="${board == null and posts.hasNext()}"
+                       th:href="@{/post(page=${posts.number + 1})}"
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
+                        다음
+                    </a>
 
-            <span>
-                <span th:text="${posts.number + 1}">1</span>
-                /
-                <span th:text="${posts.totalPages}">1</span>
-            </span>
+                </div>
+            </div>
 
-            <a th:if="${posts.hasNext()}"
-               th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}">
-                다음
-            </a>
         </div>
-
-        <!-- 전체 게시글 목록 페이징 -->
-        <div th:if="${board == null}">
-            <a th:if="${posts.hasPrevious()}"
-               th:href="@{/post(page=${posts.number - 1})}">
-                이전
-            </a>
-
-            <span>
-                <span th:text="${posts.number + 1}">1</span>
-                /
-                <span th:text="${posts.totalPages}">1</span>
-            </span>
-
-            <a th:if="${posts.hasNext()}"
-               th:href="@{/post(page=${posts.number + 1})}">
-                다음
-            </a>
-        </div>
-    </div>
+    </main>
 </div>
+<div th:insert="~{fragments/layout :: footer}"></div>
 
 <!-- 게시판 수정/삭제 모달 -->
-<div id="updateBoardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-     background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
-    <div id="updateBoardModalContent"></div>
+<div id="updateBoardModal"
+     class="hidden fixed inset-0 bg-black/60 z-[99999] items-center justify-center">
+    <div id="updateBoardModalContent" class="relative z-[100000] w-full max-w-md mx-4"></div>
 </div>
 
 <script th:if="${board != null}" th:inline="javascript">
     const boardId = /*[[${board.id}]]*/ null;
 
-    document.getElementById('updateBoardBtn').addEventListener('click', async () => {
+    const updateBoardBtn = document.getElementById('updateBoardBtn');
+    const updateBoardModal = document.getElementById('updateBoardModal');
+    const updateBoardModalContent = document.getElementById('updateBoardModalContent');
+
+    updateBoardBtn.addEventListener('click', async () => {
         const res = await fetch(`/board/update-open/${boardId}/fragment`);
-        document.getElementById('updateBoardModalContent').innerHTML = await res.text();
-        document.getElementById('updateBoardModal').style.display = 'flex';
+        updateBoardModalContent.innerHTML = await res.text();
+
+        updateBoardModal.classList.remove('hidden');
+        updateBoardModal.classList.add('flex');
+
         attachUpdateModalListeners();
     });
 
     function attachUpdateModalListeners() {
-        document.querySelector('.close-btn')?.addEventListener('click', () => {
-            document.getElementById('updateBoardModal').style.display = 'none';
+        updateBoardModalContent.querySelector('.close-btn')?.addEventListener('click', () => {
+            updateBoardModal.classList.add('hidden');
+            updateBoardModal.classList.remove('flex');
         });
 
-        document.querySelector('#updateBoardModalContent form')?.addEventListener('submit', async (e) => {
+        updateBoardModalContent.querySelector('form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const action = e.submitter?.getAttribute('formaction') || e.target.action;
 
             if (e.submitter?.classList.contains('delete-btn')) {
@@ -161,10 +218,11 @@
             });
 
             if (!res.redirected) {
-                document.getElementById('updateBoardModalContent').innerHTML = await res.text();
+                updateBoardModalContent.innerHTML = await res.text();
                 attachUpdateModalListeners();
             } else {
-                document.getElementById('updateBoardModal').style.display = 'none';
+                updateBoardModal.classList.add('hidden');
+                updateBoardModal.classList.remove('flex');
                 location.href = res.url;
             }
         });

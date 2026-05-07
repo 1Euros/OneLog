@@ -3,49 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <title>게시판 수정/삭제</title>
-    <style>
-        #update-board-modal {
-            position: relative; width: 350px; padding: 25px; border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #fff;
-            margin: 100px auto; border: 1px solid #eee;
-        }
-        .close-btn {
-            position: absolute; top: 15px; right: 15px; background: none;
-            border: none; font-size: 24px; cursor: pointer; color: #aaa;
-        }
-        .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
-        input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .button-group { margin-top: 20px; display: flex; justify-content: space-between; }
-        .update-btn { background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-        .delete-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
 </head>
 <body>
 
-<div id="update-board-modal" th:fragment="updateForm">
-    <!-- 취소(X) 버튼 -->
-    <button type="button" class="close-btn" onclick="history.back()">&times;</button>
+<div th:fragment="updateForm" class="card bg-base-100 shadow-2xl">
 
-    <h2>게시판 수정/삭제</h2>
+    <div class="card-body relative">
 
-    <form th:object="${boardRequestDto}" method="post">
-        <div>
-            <label for="name" class="visually-hidden">게시판 이름 수정</label>
-            <!-- 기존 이름이 th:field를 통해 input에 자동으로 채워집니다 -->
-            <input type="text" th:field="*{name}" id="name" placeholder="새 이름을 입력하세요" required>
+        <button type="button"
+                class="close-btn btn btn-sm btn-circle btn-ghost absolute right-3 top-3 z-[100001] bg-base-100 shadow">
+            ✕
+        </button>
 
-            <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red; font-size: 0.85rem; margin-top: 8px;"></p>
-        </div>
+        <h2 class="card-title text-xl">게시판 수정/삭제</h2>
 
-        <div class="button-group">
-            <!-- 수정 버튼: action을 /board/update/{id}로 설정 -->
-            <button type="submit" th:formaction="@{/board/update/{id}(id=${boardId})}" class="update-btn">수정</button>
+        <form th:object="${boardRequestDto}" method="post" class="space-y-4 mt-2">
 
-            <!-- 삭제 버튼: action을 /board/delete/{id}로 설정 -->
-            <button type="submit" th:formaction="@{/board/delete/{id}(id=${boardId})}"
-                    class="delete-btn">삭제</button>
-        </div>
-    </form>
+            <div>
+                <label class="label" for="name">
+                    <span class="label-text">게시판 이름</span>
+                </label>
+
+                <input type="text"
+                       th:field="*{name}"
+                       id="name"
+                       placeholder="새 이름을 입력하세요"
+                       class="input input-bordered w-full"
+                       required>
+
+                <p th:if="${errorMessage}"
+                   th:text="${errorMessage}"
+                   class="text-error text-sm mt-2">
+                    에러 메시지
+                </p>
+            </div>
+
+            <div class="card-actions justify-between">
+                <button type="submit"
+                        th:formaction="@{/board/delete/{id}(id=${boardId})}"
+                        class="delete-btn btn btn-error btn-outline">
+                    삭제
+                </button>
+
+                <button type="submit"
+                        th:formaction="@{/board/update/{id}(id=${boardId})}"
+                        class="update-btn btn btn-primary">
+                    수정
+                </button>
+            </div>
+
+        </form>
+
+    </div>
 </div>
 
 </body>

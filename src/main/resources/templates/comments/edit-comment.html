@@ -1,29 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>edit-comment</title>
+    <title>댓글 수정</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
 </head>
 <body>
-<div th:fragment="editSection">
-    <div th:if="${errorMessage != null}" th:text="${errorMessage}" style="color:red;"></div>
-    <form method="post" th:action="@{/comment/{id}/update(id=${commentId}, postId=${postId})}">
-        <h2>
-            댓글 수정
-        </h2>
-        <label for="content">
-            내용 :
-        </label>
-        <input id="content" type="text" name="content">
-        <br>
 
-        <button>
-            수정
-        </button>
-    </form>
+<div th:fragment="editSection" class="card bg-base-100 shadow-none">
+
+    <div class="card-body">
+
+        <h2 class="card-title">댓글 수정</h2>
+
+        <div th:if="${errorMessage != null}" class="alert alert-error">
+            <span th:text="${errorMessage}">에러 메시지</span>
+        </div>
+
+        <form method="post"
+              th:action="@{/comment/{id}/update(id=${commentId}, postId=${postId})}"
+              class="space-y-4">
+
+            <div>
+                <label class="label" for="content">
+                    <span class="label-text">내용</span>
+                </label>
+
+                <input id="content"
+                       type="text"
+                       name="content"
+                       placeholder="수정할 댓글 내용을 입력해주세요"
+                       class="input input-bordered w-full">
+            </div>
+
+            <div class="card-actions justify-end">
+                <button type="submit" class="btn btn-primary">
+                    수정 완료
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
     <script th:if="${errorMessage != null}" th:inline="javascript">
-        alert(/*[[${errorMessage}]]*/)
+        alert(/*[[${errorMessage}]]*/);
     </script>
+
 </div>
+
 </body>
 </html>
