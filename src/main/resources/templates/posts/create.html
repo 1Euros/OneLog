@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성</title>
+</head>
+<body>
+
+<h1>게시글 작성</h1>
+
+<hr>
+
+<form action="/post/create" method="post">
+
+    <div>
+        <label for="boardId">게시판</label>
+        <select id="boardId" name="boardId" required>
+            <option value="">게시판을 선택해주세요</option>
+
+            <option th:each="board : ${boards}"
+                    th:value="${board.id}"
+                    th:text="${board.name}"
+                    th:selected="${selectedBoardId != null and board.id == selectedBoardId}">
+                게시판 이름
+            </option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="nickname">작성자 이름</label>
+        <input id="nickname"
+               type="text"
+               name="nickname"
+               placeholder="작성자 이름을 입력해주세요"
+               maxlength="30"
+               required>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="password">비밀번호</label>
+        <input id="password"
+               type="password"
+               name="password"
+               placeholder="숫자 6자리"
+               pattern="[0-9]{6}"
+               required>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="title">제목</label>
+        <input id="title"
+               type="text"
+               name="title"
+               placeholder="제목을 입력해주세요"
+               maxlength="100"
+               required>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="content">내용</label><br>
+        <textarea id="content"
+                  name="content"
+                  rows="10"
+                  cols="60"
+                  placeholder="내용을 입력해주세요"
+                  required></textarea>
+    </div>
+
+    <br>
+
+    <button type="submit">등록</button>
+
+    <button type="button" onclick="history.back()">
+        취소
+    </button>
+
+</form>
+
+</body>
+</html>
