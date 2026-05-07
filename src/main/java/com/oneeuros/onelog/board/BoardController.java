@@ -105,7 +105,16 @@ public class BoardController {
                     }
                 }
             }
-            return "boards/boards"; // 추후 연결
+            Board board = boardService.findById(boardId);
+            model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+            model.addAttribute("boardId", boardId);
+            return "boards/update-form";// 기존 창으로 다시 돌아가기
+        }else if (boardService.existBoardName(request.name())) {
+            model.addAttribute("errorMessage", "이미 존재하는 게시판입니다");
+            Board board = boardService.findById(boardId);
+            model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+            model.addAttribute("boardId", boardId);
+            return "boards/update-form";
         }
 
         //trim 처리
@@ -114,7 +123,7 @@ public class BoardController {
         Board board = boardService.update(boardId,name);
 
         model.addAttribute("board", board);
-        return "boards/boards";
+        return "redirect:/post/board/%s/posts".formatted(board.getId());
     }
 
     //게시판 삭제
