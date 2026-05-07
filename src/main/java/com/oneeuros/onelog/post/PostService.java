@@ -135,8 +135,8 @@ public class PostService {
 
         return PasswordUtils.checkPassword(password, post.getPassword());
     }
-    // 게시글 삭제 : 댓글이 없을 때만 삭제
-    @Transactional
+    // 게시글 삭제
+   /* @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
@@ -144,6 +144,15 @@ public class PostService {
         if (commentService.countCommentsByPostId(postId) > 0) {
             throw new IllegalArgumentException("댓글이 있는 게시글은 삭제할 수 없습니다.");
         }
+
+        postRepository.delete(post);
+    }*/
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        //commentService.deleteCommentsByPostId(postId);
 
         postRepository.delete(post);
     }
