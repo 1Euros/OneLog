@@ -86,8 +86,8 @@ public class CommentService {
     // 댓글 삭제
     @Transactional
     public void deleteComment(Long commentId) {
-        commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 아이디의 댓글이 없습니다."));
-        commentRepository.deleteById(commentId);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("해당하는 아이디의 댓글이 없습니다."));
+        comment.softDeleteComment();
     }
 
     // 해당 게시글의 최신순으로 첫번째 댓글 조회

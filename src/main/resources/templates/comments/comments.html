@@ -40,9 +40,14 @@
     <h2>댓글</h2>
     <div th:each="comment:${comments}" th:style="'margin-left: ' + (${comment.depth} * 50) + 'px'">
         <div th:text="${comment.id}" ></div>
-        <div th:text="${comment.content}" ></div>
-        <div th:text="${comment.nickname}" ></div>
-        <div th:text="${comment.createdAt}" ></div>
+        <div th:if="${comment.isDeleted==true}" >
+            <p> 삭제된 댓글입니다.</p>
+        </div>
+        <div th:unless="${comment.isDeleted==true}">
+            <div  th:text="${comment.content}" ></div>
+            <div th:text="${comment.nickname}" ></div>
+            <div th:text="${comment.createdAt}" ></div>
+        </div>
         <div th:if="${comment.parent != null}">
             <div th:text="${comment.parent.id}" ></div>
         </div>

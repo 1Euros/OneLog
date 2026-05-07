@@ -46,6 +46,9 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Integer groupOrder;   // 최상위 댓글 기준 정렬 순서
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;   // 댓글 삭제시 "삭제된 댓글입니다" 문구 넣기
+
 
     public Comment (String nickname, String password, String content, Post post, Comment parent, int depth,Long groupId,  int groupOrder){
         this.nickname = nickname;
@@ -68,6 +71,10 @@ public class Comment extends BaseEntity {
 
     public void registerGroupId(Long groupId) {
         this.groupId = groupId;
+    }
+
+    public void softDeleteComment() {
+        this.isDeleted = true;
     }
 
 }
