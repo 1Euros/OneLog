@@ -3,88 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 작성</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
 
-<h1>게시글 작성</h1>
+<body class="bg-base-200 min-h-screen">
 
-<hr>
+<div class="flex min-h-screen">
 
-<form action="/post/create" method="post">
+    <!-- 왼쪽 사이드바 -->
+    <aside class="w-64 min-h-screen bg-base-100 border-r border-base-300 p-4 sticky top-0">
+        <div th:insert="~{fragments/layout :: sidebar}"></div>
+    </aside>
 
-    <div>
-        <label for="boardId">게시판</label>
-        <select id="boardId" name="boardId">
-            <option value="">게시판을 선택해주세요</option>
+    <!-- 본문 -->
+    <main class="flex-1 p-8">
+        <div class="max-w-3xl mx-auto space-y-6">
 
-            <option th:each="board : ${boards}"
-                    th:value="${board.id}"
-                    th:text="${board.name}"
-                    th:selected="${selectedBoardId != null and board.id == selectedBoardId}">
-                게시판 이름
-            </option>
-        </select>
-    </div>
+            <!-- 상단 -->
+            <div>
+                <a href="/post" class="btn btn-ghost mb-4">
+                    ← 목록으로
+                </a>
 
-    <br>
+                <h1 class="text-3xl font-bold">
+                    게시글 작성
+                </h1>
 
-    <div>
-        <label for="nickname">작성자 이름</label>
-        <input id="nickname"
-               type="text"
-               name="nickname"
-               value = "익명"
-               placeholder="작성자 이름을 입력해주세요"
-               maxlength="30"
-               required>
-    </div>
+                <p class="text-sm text-base-content/60 mt-2">
+                    게시판을 선택하지 않으면 기본 게시판에 작성됩니다.
+                </p>
+            </div>
 
-    <br>
+            <!-- 작성 카드 -->
+            <div class="card bg-base-100 shadow-sm border border-base-300">
+                <div class="card-body">
 
-    <div>
-        <label for="password">비밀번호</label>
-        <input id="password"
-               type="password"
-               name="password"
-               value="000000"
-               placeholder="숫자 6자리"
-               pattern="[0-9]{6}"
-               required>
-    </div>
+                    <form action="/post/create" method="post" class="space-y-5">
 
-    <br>
+                        <!-- 게시판 선택 -->
+                        <div>
+                            <label class="label" for="boardId">
+                                <span class="label-text font-semibold">게시판</span>
+                            </label>
 
-    <div>
-        <label for="title">제목</label>
-        <input id="title"
-               type="text"
-               name="title"
-               placeholder="제목을 입력해주세요"
-               maxlength="100"
-               required>
-    </div>
+                            <select id="boardId"
+                                    name="boardId"
+                                    class="select select-bordered w-full">
 
-    <br>
+                                <!-- 선택하지 않으면 서버에서 기본 게시판으로 처리 -->
+                                <option value=""
+                                        th:selected="${selectedBoardId == null}">
+                                    기본 게시판
+                                </option>
 
-    <div>
-        <label for="content">내용</label><br>
-        <textarea id="content"
-                  name="content"
-                  rows="10"
-                  cols="60"
-                  placeholder="내용을 입력해주세요"
-                  required></textarea>
-    </div>
+                                <!-- boards 목록 안의 '기본 게시판'은 중복 출력 방지 -->
+                                <option th:each="board : ${boards}"
+                                        th:if="${board.name != '기본 게시판'}"
+                                        th:value="${board.id}"
+                                        th:text="${board.name}"
+                                        th:selected="${selectedBoardId != null and board.id == selectedBoardId}">
+                                    게시판 이름
+                                </option>
+                            </select>
 
-    <br>
+                            <p class="text-xs text-base-content/50 mt-1">
+                                선택하지 않으면 기본 게시판으로 저장됩니다.
+                            </p>
+                        </div>
 
-    <button type="submit">등록</button>
+                        <!-- 작성자 -->
+                        <div>
+                            <label class="label" for="nickname">
+                                <span class="label-text font-semibold">작성자 이름</span>
+                            </label>
 
-    <button type="button" onclick="history.back()">
-        취소
-    </button>
+                            <input id="nickname"
+                                   type="text"
+                                   name="nickname"
+                                   value="익명"
+                                   placeholder="작성자 이름을 입력해주세요"
+                                   maxlength="30"
+                                   required
+                                   class="input input-bordered w-full">
+                        </div>
 
-</form>
+                        <!-- 비밀번호 -->
+                        <div>
+                            <label class="label" for="password">
+                                <span class="label-text font-semibold">비밀번호</span>
+                            </label>
+
+                            <input id="password"
+                                   type="password"
+                                   name="password"
+                                   value="000000"
+                                   placeholder="숫자 6자리"
+                                   pattern="[0-9]{6}"
+                                   required
+                                   class="input input-bordered w-full">
+
+                            <p class="text-xs text-base-content/50 mt-1">
+                                비밀번호는 숫자 6자리로 입력해주세요.
+                            </p>
+                        </div>
+
+                        <!-- 제목 -->
+                        <div>
+                            <label class="label" for="title">
+                                <span class="label-text font-semibold">제목</span>
+                            </label>
+
+                            <input id="title"
+                                   type="text"
+                                   name="title"
+                                   placeholder="제목을 입력해주세요"
+                                   maxlength="100"
+                                   required
+                                   class="input input-bordered w-full">
+                        </div>
+
+                        <!-- 내용 -->
+                        <div>
+                            <label class="label" for="content">
+                                <span class="label-text font-semibold">내용</span>
+                            </label>
+
+                            <textarea id="content"
+                                      name="content"
+                                      rows="10"
+                                      placeholder="내용을 입력해주세요"
+                                      required
+                                      class="textarea textarea-bordered w-full"></textarea>
+                        </div>
+
+                        <!-- 버튼 -->
+                        <div class="card-actions justify-end gap-2 pt-2">
+                            <button type="button"
+                                    onclick="history.back()"
+                                    class="btn btn-ghost">
+                                취소
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                등록
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</div>
 
 </body>
 </html>

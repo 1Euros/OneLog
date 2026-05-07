@@ -1,19 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>댓글 정보</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
-    <div th:if="${comment==null}">
-        <p>새로운 댓글을 적어주세요</p>
-    </div>
-    <div th:unless="${comment==null}">
-        <div th:text=" ${comment.id}"></div>
-        <div th:text=" ${comment.content}"></div>
-        <div th:text=" ${comment.nickname}"></div>
-        <div th:text=" ${comment.createdAt}"></div>
-        <div th:text=" ${count}"></div>
-    </div>
+
+<body class="bg-base-200 min-h-screen">
+
+<div class="flex min-h-screen">
+
+    <!-- 왼쪽 사이드바 -->
+    <aside class="w-64 min-h-screen bg-base-100 border-r border-base-300 p-4 sticky top-0">
+        <div th:insert="~{fragments/layout :: sidebar}"></div>
+    </aside>
+
+    <!-- 본문 -->
+    <main class="flex-1 p-8">
+        <div class="max-w-2xl mx-auto space-y-6">
+
+            <div>
+                <a href="/post" class="btn btn-ghost mb-4">
+                    ← 게시글 목록으로
+                </a>
+
+                <h1 class="text-3xl font-bold">
+                    댓글 정보
+                </h1>
+
+                <p class="text-sm text-base-content/60 mt-2">
+                    댓글 작성 결과를 확인할 수 있습니다.
+                </p>
+            </div>
+
+            <!-- 댓글이 없을 때 -->
+            <div th:if="${comment == null}" class="card bg-base-100 shadow-sm border border-base-300">
+                <div class="card-body text-center space-y-4">
+
+                    <div class="mx-auto w-16 h-16 rounded-full bg-base-200 flex items-center justify-center">
+                        <span class="text-3xl">💬</span>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xl font-bold">
+                            아직 댓글이 없습니다
+                        </h2>
+
+                        <p class="text-base-content/60 mt-2">
+                            새로운 댓글을 작성해 주세요.
+                        </p>
+                    </div>
+
+                    <div class="card-actions justify-center">
+                        <button type="button"
+                                onclick="history.back()"
+                                class="btn btn-primary">
+                            이전 화면으로
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 댓글이 있을 때 -->
+            <div th:unless="${comment == null}" class="card bg-base-100 shadow-sm border border-base-300">
+                <div class="card-body space-y-4">
+
+                    <div class="flex justify-between items-center">
+                        <span class="badge badge-primary badge-outline">
+                            Comment
+                        </span>
+
+                        <span class="text-sm text-base-content/50">
+                            ID:
+                            <span th:text="${comment.id}">1</span>
+                        </span>
+                    </div>
+
+                    <div>
+                        <p class="font-semibold"
+                           th:text="${comment.nickname}">
+                            작성자
+                        </p>
+
+                        <p class="text-sm text-base-content/50 mt-1"
+                           th:text="${#temporals.format(comment.createdAt, 'yyyy/MM/dd HH:mm')}">
+                            2026/05/07 12:00
+                        </p>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div>
+                        <h2 class="text-lg font-bold mb-2">
+                            댓글 내용
+                        </h2>
+
+                        <p class="whitespace-pre-line leading-7 text-base-content/80"
+                           th:text="${comment.content}">
+                            댓글 내용입니다.
+                        </p>
+                    </div>
+
+                    <div th:if="${count != null}" class="stats shadow bg-base-200">
+                        <div class="stat">
+                            <div class="stat-title">댓글 수</div>
+                            <div class="stat-value text-primary" th:text="${count}">0</div>
+                        </div>
+                    </div>
+
+                    <div class="card-actions justify-end gap-2">
+                        <button type="button"
+                                onclick="history.back()"
+                                class="btn btn-ghost">
+                            이전 화면
+                        </button>
+
+                        <a href="/post" class="btn btn-primary">
+                            게시글 목록
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
 </body>
 </html>
