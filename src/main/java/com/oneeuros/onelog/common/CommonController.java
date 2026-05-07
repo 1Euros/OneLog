@@ -1,6 +1,7 @@
 package com.oneeuros.onelog.common;
 
 import com.oneeuros.onelog.comment.CommentService;
+import com.oneeuros.onelog.post.Post;
 import com.oneeuros.onelog.post.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -63,8 +64,9 @@ public class CommonController {
             // 비밀번호 맞을 시 수정/삭제로 분기해서 해당 창으로 이동
             if (pa == PasswordAction.EDIT) {
                 // 수정 후 상세페이지로 이동
-                // 수정 기능은 다음 단계에서 연결
-                return "redirect:/post/" + domainId;
+                Post post = postService.findPostForEdit(domainId);
+                model.addAttribute("post", post);
+                return "posts/edit-post";
             }
 
             try {

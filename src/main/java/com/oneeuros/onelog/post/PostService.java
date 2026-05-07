@@ -119,6 +119,13 @@ public class PostService {
 
         return post;
     }
+    // 게시글 수정 화면용 조회 메서드
+    @Transactional(readOnly = true)
+    public Post findPostForEdit(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+    }
+
 
     //수정 / 삭제시 비밀번호 확인
     @Transactional(readOnly = true)

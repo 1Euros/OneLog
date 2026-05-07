@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시글 수정</title>
+</head>
+<body>
+
+<h1>게시글 수정</h1>
+
+<hr>
+
+<form th:action="@{/post/update/{postId}(postId=${post.id})}" method="post">
+
+  <div>
+    <label for="title">제목</label>
+    <input id="title"
+           type="text"
+           name="title"
+           th:value="${post.title}"
+           maxlength="100"
+           required>
+  </div>
+
+  <br>
+
+  <div>
+    <label for="content">내용</label><br>
+    <textarea id="content"
+              name="content"
+              rows="10"
+              cols="60"
+              required
+              th:text="${post.content}"></textarea>
+  </div>
+
+  <br>
+
+  <div>
+    <label for="password">비밀번호</label>
+    <input id="password"
+           type="password"
+           name="password"
+           placeholder="비밀번호 6자리"
+           pattern="[0-9]{6}"
+           required>
+  </div>
+
+  <br>
+
+  <button type="submit">수정 완료</button>
+
+  <button type="button"
+          th:onclick="|location.href='@{/post/{postId}(postId=${post.id})}'|">
+    취소
+  </button>
+
+</form>
+
+</body>
+</html>
