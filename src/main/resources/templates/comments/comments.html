@@ -47,7 +47,10 @@
             <div th:text="${comment.nickname}" ></div>
             <div th:text="${comment.createdAt}" ></div>
         </div>
-        <button th:unless="${comment.isDeleted==true}"  th:onclick="|location.href='@{/confirm/password/comment/{id}?postId={postId}(id=${comment.id}, postId=${postId})}'|">
+        <button class="confirm-btn"
+                th:unless="${comment.isDeleted==true}"
+                th:data-comment-id="${comment.id}"
+                th:data-post-id="${postId}">
             수정/삭제
         </button>
         <button class="reply-btn" th:unless="${comment.isDeleted==true}" th:data-comment-id="${comment.id}">
