@@ -38,7 +38,7 @@
         </form>
     </div>
     <h2>댓글</h2>
-    <div th:each="comment:${comments}">
+    <div th:each="comment:${comments}" th:style="'margin-left: ' + (${comment.depth} * 50) + 'px'">
         <div th:text="${comment.id}" ></div>
         <div th:text="${comment.content}" ></div>
         <div th:text="${comment.nickname}" ></div>

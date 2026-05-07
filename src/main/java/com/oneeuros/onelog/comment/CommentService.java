@@ -71,7 +71,7 @@ public class CommentService {
     // 댓글 목록 조회
     @Transactional(readOnly = true)
     public List<Comment> findComments(Long postId) {
-        return commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
+        return commentRepository.findAllByPostIdWithReply(postId);
 
     }
 

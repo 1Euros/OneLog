@@ -31,4 +31,20 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     int findMaxOrder(Long groupId);
 
     List<Comment> findByGroupIdAndGroupOrderGreaterThanEqual(Long groupId, Integer groupOrder);
+
+    @Query(value="""
+    select
+        s.*
+    from (
+        select
+            id,
+            created_at
+        from comments
+        where depth = 0 and post_id= :postId
+    ) c
+    left outer join comments s
+        on c.id = s.group_id
+    order by c.created_at desc, s.group_order asc
+    """, nativeQuery = true)
+    List<Comment> findAllByPostIdWithReply(Long postId);
 }
