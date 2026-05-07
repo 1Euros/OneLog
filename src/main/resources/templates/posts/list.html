@@ -125,24 +125,25 @@
             </div>
 
             <!-- 페이징 -->
-            <div class="flex justify-center pt-4">
+            <div th:if="${posts.totalPages > 0}" class="flex justify-center pt-4">
                 <div class="join">
 
                     <!-- 특정 게시판 이전 -->
                     <a th:if="${board != null and posts.hasPrevious()}"
                        th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}"
-                       class="join-item btn">
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
                         이전
                     </a>
 
                     <!-- 전체 게시글 이전 -->
                     <a th:if="${board == null and posts.hasPrevious()}"
                        th:href="@{/post(page=${posts.number - 1})}"
-                       class="join-item btn">
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
                         이전
                     </a>
 
-                    <button type="button" class="join-item btn btn-disabled">
+                    <button type="button"
+                            class="join-item btn pointer-events-none bg-base-300 text-base-content border-base-300 font-semibold">
                         <span th:text="${posts.number + 1}">1</span>
                         /
                         <span th:text="${posts.totalPages}">1</span>
@@ -151,14 +152,14 @@
                     <!-- 특정 게시판 다음 -->
                     <a th:if="${board != null and posts.hasNext()}"
                        th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}"
-                       class="join-item btn">
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
                         다음
                     </a>
 
                     <!-- 전체 게시글 다음 -->
                     <a th:if="${board == null and posts.hasNext()}"
                        th:href="@{/post(page=${posts.number + 1})}"
-                       class="join-item btn">
+                       class="join-item btn border-base-300 text-base-content hover:bg-base-300">
                         다음
                     </a>
 
