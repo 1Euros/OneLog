@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 목록</title>
+    <style>
+        #update-board-modal {
+            position: relative; width: 350px; padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #fff; border: 1px solid #eee;
+        }
+        #update-board-modal .close-btn {
+            position: absolute; top: 15px; right: 15px; background: none;
+            border: none; font-size: 24px; cursor: pointer; color: #aaa;
+        }
+        #update-board-modal input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        #update-board-modal .button-group { margin-top: 20px; display: flex; justify-content: space-between; }
+        #update-board-modal .update-btn { background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        #update-board-modal .delete-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+    </style>
 </head>
 <body>
 <div style="display:flex;">
@@ -28,7 +42,7 @@
             <button th:unless="${board != null}" onclick="location.href='/post/create'">
                 글쓰기
             </button>
-            <button th:if="${board != null}" th:onclick="|location.href='@{/board/update-open/{boardId}(boardId=${board.id})}'|">
+            <button th:if="${board != null}" id="updateBoardBtn" th:data-board-id="${board.id}">
                 수정/삭제
             </button>
 
@@ -111,6 +125,51 @@
         </div>
     </div>
 </div>
+
+<!-- 게시판 수정/삭제 모달 -->
+<div id="updateBoardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+    <div id="updateBoardModalContent"></div>
+</div>
+
+<script th:if="${board != null}" th:inline="javascript">
+    const boardId = /*[[${board.id}]]*/ null;
+
+    document.getElementById('updateBoardBtn').addEventListener('click', async () => {
+        const res = await fetch(`/board/update-open/${boardId}/fragment`);
+        document.getElementById('updateBoardModalContent').innerHTML = await res.text();
+        document.getElementById('updateBoardModal').style.display = 'flex';
+        attachUpdateModalListeners();
+    });
+
+    function attachUpdateModalListeners() {
+        document.querySelector('.close-btn')?.addEventListener('click', () => {
+            document.getElementById('updateBoardModal').style.display = 'none';
+        });
+
+        document.querySelector('#updateBoardModalContent form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const action = e.submitter?.getAttribute('formaction') || e.target.action;
+
+            if (e.submitter?.classList.contains('delete-btn')) {
+                if (!confirm('정말로 삭제하시겠습니까?')) return;
+            }
+
+            const res = await fetch(action, {
+                method: 'POST',
+                body: new FormData(e.target)
+            });
+
+            if (!res.redirected) {
+                document.getElementById('updateBoardModalContent').innerHTML = await res.text();
+                attachUpdateModalListeners();
+            } else {
+                document.getElementById('updateBoardModal').style.display = 'none';
+                location.href = res.url;
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

@@ -31,6 +31,15 @@ public class BoardController {
         return "boards/create-form :: createForm";
     }
 
+    // 게시판 수정 화면 fragment 반환 (모달용)
+    @GetMapping("/update-open/{boardId}/fragment")
+    public String openUpdateFormFragment(@PathVariable Long boardId, Model model) {
+        Board board = boardService.findById(boardId);
+        model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+        model.addAttribute("boardId", boardId);
+        return "boards/update-form :: updateForm";
+    }
+
     // 게시판 수정 화면 열기
     @GetMapping("/update-open/{boardId}")
     public String openUpdateForm(@PathVariable Long boardId, Model model, RedirectAttributes redirectAttributes){
@@ -114,13 +123,13 @@ public class BoardController {
             Board board = boardService.findById(boardId);
             model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
             model.addAttribute("boardId", boardId);
-            return "boards/update-form";// 기존 창으로 다시 돌아가기
+            return "boards/update-form :: updateForm";
         }else if (boardService.existBoardName(request.name())) {
             model.addAttribute("errorMessage", "이미 존재하는 게시판입니다");
             Board board = boardService.findById(boardId);
             model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
             model.addAttribute("boardId", boardId);
-            return "boards/update-form";
+            return "boards/update-form :: updateForm";
         }
 
         //trim 처리
