@@ -118,10 +118,6 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
-        if (!PasswordUtils.checkPassword(request.password(), post.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-
         Long boardId = request.boardId();
 
         if (boardId == null) {

@@ -7,7 +7,12 @@
 <body>
 
 <h1>게시글 수정</h1>
-
+<div>
+  <p>
+    <strong>작성자 이름 :</strong>
+    <span th:text="${post.nickname}">작성자</span>
+  </p>
+</div>
 <hr>
 
 <form th:action="@{/post/update/{postId}(postId=${post.id})}" method="post">
@@ -41,18 +46,6 @@
               cols="60"
               required
               th:text="${post.content}"></textarea>
-  </div>
-
-  <br>
-
-  <div>
-    <label for="password">비밀번호</label>
-    <input id="password"
-           type="password"
-           name="password"
-           placeholder="비밀번호 6자리"
-           pattern="[0-9]{6}"
-           required>
   </div>
 
   <br>
