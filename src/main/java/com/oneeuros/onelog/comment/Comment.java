@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false, length =30)
@@ -25,7 +24,7 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 

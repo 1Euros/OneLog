@@ -10,6 +10,6 @@ public enum PasswordAction {
                 return a;
             }
         }
-        return null;
+        throw new IllegalArgumentException("잘못된 action: "+ action);
     }
 }

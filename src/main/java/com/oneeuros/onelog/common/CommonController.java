@@ -1,6 +1,5 @@
 package com.oneeuros.onelog.common;
 
-import com.oneeuros.onelog.comment.Comment;
 import com.oneeuros.onelog.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -9,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,9 +18,11 @@ public class CommonController {
     @GetMapping("/confirm/password/{domain}/{domainId}")
     public String showConfirmPassword (@PathVariable String domain,
                                         @PathVariable Long domainId,
+                                        @RequestParam Long postId,
                                         Model model) {
         model.addAttribute("domain", domain);
         model.addAttribute("domainId",domainId);
+        model.addAttribute("postId",postId);
         return "common/confirm-password";
     }
 
@@ -33,13 +32,14 @@ public class CommonController {
                                   @PathVariable Long domainId,
                                   @PathVariable String action,
                                   @RequestParam String password,
+                                  @RequestParam Long postId,
                                   Model model
                                   ) {
         PasswordDomain pd = PasswordDomain.validDomain(domain);
         PasswordAction pa = PasswordAction.validAction(action);
 
         //domain과 action에 따라 분기
-        if (pd == null && pa == null) throw new IllegalArgumentException("잘못된 경로입니다.");
+        if (pd == null || pa == null) throw new IllegalArgumentException("잘못된 경로입니다.");
         // 게시글일때 게시글 서비스의 수정/삭제 메서드로 이동
         if (pd == PasswordDomain.POST) {
             if (pa == PasswordAction.EDIT) {
@@ -59,13 +59,12 @@ public class CommonController {
             if (pa == PasswordAction.EDIT) {
                 //수정창으로 이동
                 model.addAttribute("commentId", domainId);
+                model.addAttribute("postId", postId);
                 return "comments/edit-comment";
             }else {
                 // 삭제 후 댓글 목록으로 이동
-                Long postId = commentService.deleteComment(domainId);
-                List<Comment> comments = commentService.findComments(postId);
-                model.addAttribute("comments",comments);
-                return "comments/comments";
+                commentService.deleteComment(domainId);
+                return "redirect:/comment/post/%s/comments".formatted(postId);
             }
         }
     }
