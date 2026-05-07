@@ -111,4 +111,10 @@ public class CommentService {
         // 비밀번호 확인
         return PasswordUtils.checkPassword(password, comment.getPassword());
     }
+
+    // 해당 게시글의 댓글 전체 삭제
+    @Transactional
+    public void deleteCommentsByPostId(Long postId) {
+        commentRepository.deleteAllByPostId(postId);
+    }
 }
