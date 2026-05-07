@@ -47,4 +47,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     order by c.created_at desc, s.group_order asc
     """, nativeQuery = true)
     List<Comment> findAllByPostIdWithReply(Long postId);
+
+    void deleteAllByPostId(Long postId);
 }
