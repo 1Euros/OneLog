@@ -28,7 +28,7 @@
             <button th:unless="${board != null}" onclick="location.href='/post/create'">
                 글쓰기
             </button>
-            <button th:onclick="|location.href='@{/board/update-open/{boardId}(boardId=${board.id})}'|">
+            <button th:if="${board != null}" th:onclick="|location.href='@{/board/update-open/{boardId}(boardId=${board.id})}'|">
                 수정/삭제
             </button>
 

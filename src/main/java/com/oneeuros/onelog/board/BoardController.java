@@ -128,12 +128,19 @@ public class BoardController {
 
     //게시판 삭제
     @PostMapping("/delete/{boardId}")
-    @ResponseBody // 테스트를 위해 임의 추가
     public String deleteBoard(
-            @PathVariable Long boardId){
+            @PathVariable Long boardId, Model model){
 
-        boardService.delete(boardId);
-        return "삭제 완료";
+        try {
+            boardService.delete(boardId);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage",e.getMessage());
+            Board board = boardService.findById(boardId);
+            model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+            model.addAttribute("boardId", boardId);
+            return "boards/update-form";
+        }
+        return "redirect:/post";
         // 추후 메인 페이지로 연결 필요
     }
 
