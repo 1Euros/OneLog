@@ -22,6 +22,11 @@ public class CommonController {
     private final PostService postService;
     private final BoardService boardService;
 
+    @GetMapping("/main")
+    public String showMain() {
+        return "redirect:/post";
+    }
+
     // 비밀번호 확인 창 열기
     @GetMapping("/confirm/password/{domain}/{domainId}")
     public String showConfirmPassword (@PathVariable String domain,
