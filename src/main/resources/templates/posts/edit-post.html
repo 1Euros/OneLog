@@ -6,7 +6,8 @@
 </head>
 <body>
 
-<h1>게시글 수정</h1>
+<div th:fragment="editPostSection">
+<h2>게시글 수정</h2>
 <div>
   <p>
     <strong>작성자 이름 :</strong>
@@ -52,12 +53,10 @@
 
   <button type="submit">수정 완료</button>
 
-  <button type="button"
-          th:onclick="|location.href='@{/post/{postId}(postId=${post.id})}'|">
-    취소
-  </button>
+  <button type="button" class="cancel-edit-btn">취소</button>
 
 </form>
+</div>
 
 </body>
 </html>

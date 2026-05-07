@@ -48,9 +48,7 @@
     </p>
 </div>
 
-<button th:onclick="|location.href='@{/confirm/password/post/{id}(id=${post.id})}'|">
-    수정/삭제
-</button>
+<button id="postConfirmBtn" th:data-post-id="${post.id}">수정/삭제</button>
 
 
 <hr>
@@ -82,6 +80,14 @@
     <div style="background:white; margin:10% auto; padding:20px; width:60%; max-height:70vh; overflow-y:auto;">
         <button id="closeModal">닫기</button>
         <div id="commentContent"></div>
+    </div>
+</div>
+
+<!-- 게시글 수정/삭제 모달 -->
+<div id="postModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:8px; width:500px; max-height:80vh; overflow-y:auto; position:relative;">
+        <div id="postModalContent"></div>
     </div>
 </div>
 
@@ -167,6 +173,49 @@
         await loadComments();
         modal.style.display = 'block';
     });
+
+    // 게시글 수정/삭제 모달
+    const postModal = document.getElementById('postModal');
+    const postModalContent = document.getElementById('postModalContent');
+    const postConfirmBtn = document.getElementById('postConfirmBtn');
+    const postId2 = postConfirmBtn.dataset.postId;
+
+    postConfirmBtn.addEventListener('click', async () => {
+        const res = await fetch(`/confirm/password/post/${postId2}/fragment`);
+        postModalContent.innerHTML = await res.text();
+        postModal.style.display = 'flex';
+        attachPostModalListeners();
+    });
+
+    function attachPostModalListeners() {
+        postModalContent.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const action = e.submitter?.getAttribute('formaction') || form.action;
+
+                if (e.submitter?.classList.contains('delete-btn') || action.includes('/delete')) {
+                    if (!confirm('정말로 삭제하시겠습니까?')) return;
+                }
+
+                const res = await fetch(action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+
+                if (res.redirected) {
+                    postModal.style.display = 'none';
+                    location.href = res.url;
+                } else {
+                    postModalContent.innerHTML = await res.text();
+                    attachPostModalListeners();
+                }
+            });
+        });
+
+        postModalContent.querySelector('.cancel-edit-btn')?.addEventListener('click', () => {
+            postModal.style.display = 'none';
+        });
+    }
 
     document.getElementById('closeModal').addEventListener('click', () => {
         modal.style.display = 'none';

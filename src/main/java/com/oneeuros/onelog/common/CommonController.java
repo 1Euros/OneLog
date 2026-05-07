@@ -47,7 +47,7 @@ public class CommonController {
     @GetMapping("/confirm/password/{domain}/{domainId}/fragment")
     public String showConfirmPasswordFragment(@PathVariable String domain,
                                               @PathVariable Long domainId,
-                                              @RequestParam Long postId,
+                                              @RequestParam(required = false) Long postId,
                                               Model model) {
         model.addAttribute("domain", domain);
         model.addAttribute("domainId", domainId);
@@ -89,14 +89,11 @@ public class CommonController {
 
             // 비밀번호 맞을 시 수정/삭제로 분기해서 해당 창으로 이동
             if (pa == PasswordAction.EDIT) {
-                // 수정 후 상세페이지로 이동
                 Post post = postService.findPostForEdit(domainId);
                 List<Board> boards = boardService.findAllBoards();
-
                 model.addAttribute("post", post);
                 model.addAttribute("boards", boards);
-
-                return "posts/edit-post";
+                return "posts/edit-post :: editPostSection";
             }
 
             try {
