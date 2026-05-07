@@ -22,14 +22,13 @@
         </h1>
 
         <div>
-            <a th:if="${board == null}" href="/post/create">
+            <button th:if="${board != null}" th:onclick="|location.href='@{/post/create(boardId=${board.id})}'|">
                 글쓰기
-            </a>
+            </button>
+            <button th:unless="${board != null}" onclick="location.href='/post/create'">
+                글쓰기
+            </button>
 
-            <a th:if="${board != null}"
-               th:href="@{/post/create(boardId=${board.id})}">
-                글쓰기
-            </a>
         </div>
 
         <hr>
