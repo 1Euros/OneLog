@@ -27,7 +27,10 @@
 
             <!-- 상단 -->
             <div>
-                <a href="/post" class="btn btn-ghost mb-4">
+                <a th:href="${selectedBoardId != null}
+            ? @{/post/board/{boardId}/posts(boardId=${selectedBoardId})}
+            : @{/post}"
+                   class="btn btn-ghost mb-4">
                     ← 목록으로
                 </a>
 
