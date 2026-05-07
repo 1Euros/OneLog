@@ -28,12 +28,23 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
 
-    public Comment (String nickname, String password, String content, Post post){
+    @Column(nullable = false)
+    private Integer depth;
+
+//    private int orderNumber;
+
+
+    public Comment (String nickname, String password, String content, Post post, Comment parent, int depth){
         this.nickname = nickname;
         this.password = password;
         this.content = content;
         this.post = post;
+        this.parent = parent;
+        this.depth = depth;
     }
 
     public void updateContent(String content) {

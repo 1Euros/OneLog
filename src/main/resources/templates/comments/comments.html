@@ -30,6 +30,8 @@
             </label>
             <input id="content" type="text" name="content">
             <br>
+            <input type="hidden" name="parentId">
+            <input type="hidden" name="depth" value=0>
 
             <button>
                 제출
@@ -45,6 +47,7 @@
         <button th:onclick="|location.href='@{/confirm/password/comment/{id}?postId={postId}(id=${comment.id}, postId=${postId})}'|">
             수정/삭제
         </button>
+
     </div>
 </div>
 </body>

@@ -22,9 +22,17 @@ public class CommentService {
     public void save(Post post, CommentCreateRequestDto request) {
         // 비밀번호 인코딩
         String encodedPassword = PasswordUtils.encodePassword(request.password());
+        int depth = 0;
+        Comment parent = null;
+
+        // 부모 댓글이 있다면 해당 댓글 찾기
+        if (request.parentId()!= null) {
+            parent = commentRepository.findById(request.parentId()).orElseThrow(() -> new IllegalArgumentException("해당하는 댓글이 없습니다"));
+            depth = parent.getDepth()+1;
+        }
 
         // 데이터 저장
-        Comment comment = new Comment(request.nickname(), encodedPassword, request.content(), post);
+        Comment comment = new Comment(request.nickname(), encodedPassword, request.content(), post, parent, depth);
         commentRepository.save(comment);
     }
 
