@@ -14,15 +14,89 @@
 <div class="wrapper">
     <!-- 왼쪽 사이드바 -->
     <div th:fragment="sidebar">
-        <button th:onclick="|location.href='@{/board/create-open}'|">
-            추가
-        </button>
+        <button id="addBoardBtn">추가</button>
         <h3>게시판 목록</h3>
         <ul>
             <li th:each="board : ${sidebarBoards}">
                 <a th:href="@{/post/board/{id}/posts(id=${board.id})}" th:text="${board.name}">게시판</a>
             </li>
         </ul>
+
+        <!-- 게시판 생성 모달 -->
+        <style>
+            #create-board-modal {
+                position: relative;
+                width: 350px;
+                padding: 25px;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                background-color: #fff;
+                border: 1px solid #eee;
+            }
+            #create-board-modal .close-btn {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #aaa;
+                line-height: 1;
+            }
+            #create-board-modal input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                margin-top: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            #create-board-modal .button-group { margin-top: 20px; text-align: right; }
+            #create-board-modal .submit-btn {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        </style>
+        <div id="boardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+             background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+            <div id="boardModalContent"></div>
+        </div>
+
+        <script>
+            document.getElementById('addBoardBtn').addEventListener('click', async () => {
+                const res = await fetch('/board/create-open/fragment');
+                document.getElementById('boardModalContent').innerHTML = await res.text();
+                document.getElementById('boardModal').style.display = 'flex';
+                attachBoardModalListeners();
+            });
+
+            function attachBoardModalListeners() {
+                document.querySelector('.close-btn')?.addEventListener('click', () => {
+                    document.getElementById('boardModal').style.display = 'none';
+                });
+
+                document.querySelector('#boardModalContent form')?.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const res = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form)
+                    });
+                    if (!res.redirected) {
+                        document.getElementById('boardModalContent').innerHTML = await res.text();
+                        attachBoardModalListeners();
+                    } else {
+                        document.getElementById('boardModal').style.display = 'none';
+                        location.href = res.url;
+                    }
+                });
+            }
+        </script>
     </div>
 
     <!-- 페이지별 본문 -->

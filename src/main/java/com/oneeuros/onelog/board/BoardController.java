@@ -20,9 +20,15 @@ public class BoardController {
     // 게시판 생성 화면 열기
     @GetMapping("/create-open")
     public String openCreateForm(Model model) {
-        // Validation을 위해 빈 DTO 객체를 모델에 담아 보냅니다.
         model.addAttribute("boardRequestDto", new BoardRequestDto(""));
-        return "boards/create-form"; // 생성 화면(또는 플로팅 HTML) 반환
+        return "boards/create-form";
+    }
+
+    // 게시판 생성 화면 fragment 반환 (모달용)
+    @GetMapping("/create-open/fragment")
+    public String openCreateFormFragment(Model model) {
+        model.addAttribute("boardRequestDto", new BoardRequestDto(""));
+        return "boards/create-form :: createForm";
     }
 
     // 게시판 수정 화면 열기
@@ -68,11 +74,11 @@ public class BoardController {
                 }
             }
             model.addAttribute("boardRequestDto", new BoardRequestDto(""));
-            return "boards/create-form"; // 오류 나면 그 창으로 돌아감
+            return "boards/create-form :: createForm";
         } else if (boardService.existBoardName(request.name())) {
             model.addAttribute("errorMessage", "이미 존재하는 게시판입니다");
             model.addAttribute("boardRequestDto", new BoardRequestDto(""));
-            return "boards/create-form";
+            return "boards/create-form :: createForm";
         }
         //trim 처리
         String name = request.name().trim();
