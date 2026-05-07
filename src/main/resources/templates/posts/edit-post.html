@@ -12,6 +12,15 @@
 
 <form th:action="@{/post/update/{postId}(postId=${post.id})}" method="post">
 
+  <label>게시판</label>
+  <select name="boardId">
+    <option th:each="board : ${boards}"
+            th:value="${board.id}"
+            th:text="${board.name}"
+            th:selected="${board.id == post.board.id}">
+    </option>
+  </select>
+
   <div>
     <label for="title">제목</label>
     <input id="title"

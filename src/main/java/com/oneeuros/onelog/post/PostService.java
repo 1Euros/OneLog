@@ -122,7 +122,17 @@ public class PostService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        post.update(request.title(), request.content());
+        Long boardId = request.boardId();
+
+        if (boardId == null) {
+            boardId = post.getBoard().getId(); // 선택 안 하면 기존 게시판 유지
+        }
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시판이 없습니다."));
+
+
+        post.update(request.title(), request.content(),board);
 
         return post;
     }

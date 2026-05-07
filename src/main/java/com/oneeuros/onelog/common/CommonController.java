@@ -1,5 +1,7 @@
 package com.oneeuros.onelog.common;
 
+import com.oneeuros.onelog.board.Board;
+import com.oneeuros.onelog.board.BoardService;
 import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.Post;
 import com.oneeuros.onelog.post.PostService;
@@ -11,11 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class CommonController {
     private final CommentService commentService;
     private final PostService postService;
+    private final BoardService boardService;
 
     // 비밀번호 확인 창 열기
     @GetMapping("/confirm/password/{domain}/{domainId}")
@@ -65,7 +70,11 @@ public class CommonController {
             if (pa == PasswordAction.EDIT) {
                 // 수정 후 상세페이지로 이동
                 Post post = postService.findPostForEdit(domainId);
+                List<Board> boards = boardService.findAllBoards();
+
                 model.addAttribute("post", post);
+                model.addAttribute("boards", boards);
+
                 return "posts/edit-post";
             }
 
