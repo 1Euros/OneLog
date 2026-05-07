@@ -54,7 +54,6 @@ public class BoardController {
             Model model) {
         // 입력값 검증 (컨트롤러 책임)
         if (bindingResult.hasErrors()) {
-
             if (bindingResult.hasFieldErrors("name")) {
                 var errors = bindingResult.getFieldErrors("name");
 
@@ -68,14 +67,18 @@ public class BoardController {
                     }
                 }
             }
-
-            return "boards/boards"; // 추후 연결
+            model.addAttribute("boardRequestDto", new BoardRequestDto(""));
+            return "boards/create-form"; // 오류 나면 그 창으로 돌아감
+        } else if (boardService.existBoardName(request.name())) {
+            model.addAttribute("errorMessage", "이미 존재하는 게시판입니다");
+            model.addAttribute("boardRequestDto", new BoardRequestDto(""));
+            return "boards/create-form";
         }
         //trim 처리
         String name = request.name().trim();
         Board board = boardService.save(name);
         model.addAttribute("board", board);
-        return "boards/boards";
+        return "redirect:/post/board/%s/posts".formatted(board.getId());
     }
 
     //게시판 수정

@@ -13,9 +13,9 @@ public class BoardService {
 
     @Transactional
     public Board save(String name){
-        if (boardRepository.existsByName(name)) {
-            throw new IllegalArgumentException("이미 존재하는 게시판입니다");
-        }
+//        if (boardRepository.existsByName(name)) {
+//            throw new IllegalArgumentException("이미 존재하는 게시판입니다");
+//        }
         Board board = new Board(name);
         return boardRepository.save(board);
     }
@@ -32,9 +32,9 @@ public class BoardService {
         }
 
         // 이름 중복 체크
-        if (boardRepository.existsByName(name)) {
-            throw new IllegalArgumentException("이미 존재하는 게시판입니다");
-        }
+//        if (boardRepository.existsByName(name)) {
+//            throw new IllegalArgumentException("이미 존재하는 게시판입니다");
+//        }
 
         // 엔티티 변경
         board.updateName(name);
@@ -71,5 +71,10 @@ public class BoardService {
     public Board findById(Long boardId) {
         return boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시판입니다"));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existBoardName (String name) {
+        return boardRepository.existsByName(name);
     }
 }

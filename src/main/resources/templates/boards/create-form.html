@@ -76,7 +76,7 @@
                    required>
 
             <!-- 서버 검증 에러 메시지 출력 -->
-            <p th:if="${errorMessage}"
+            <p th:if="${errorMessage!= null}"
                th:text="${errorMessage}"
                style="color: red; font-size: 0.85rem; margin-top: 8px;"></p>
         </div>

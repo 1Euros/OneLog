@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:replace="~{:: title}">기본 제목</title>
+    <style>
+        .wrapper { display: flex; }
+        .sidebar { width: 200px; min-height: 100vh; border-right: 1px solid #ccc; padding: 10px; position: sticky; top: 0; }
+        .main-content { flex: 1; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- 왼쪽 사이드바 -->
+    <div th:fragment="sidebar">
+        <button th:onclick="|location.href='@{/board/create-open}'|">
+            추가
+        </button>
+        <h3>게시판 목록</h3>
+        <ul>
+            <li th:each="board : ${sidebarBoards}">
+                <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.name}">게시판</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 페이지별 본문 -->
+    <div class="main-content" th:replace="~{:: main-content}">
+    </div>
+</div>
+</body>
+</html>
