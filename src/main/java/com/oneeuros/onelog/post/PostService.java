@@ -2,7 +2,6 @@ package com.oneeuros.onelog.post;
 
 import com.oneeuros.onelog.board.Board;
 import com.oneeuros.onelog.board.BoardRepository;
-import com.oneeuros.onelog.comment.Comment;
 import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDto;
 import com.oneeuros.onelog.post.dto.PostListResponseDto;
@@ -31,7 +30,15 @@ public class PostService {
     public Post save(PostCreateRequestDto request) {
 
 
-        Board board = boardRepository.findById(request.boardId()).orElseThrow(()->new IllegalArgumentException("해당 board id가 없습니다."));
+        // board값이 null 이면 1
+        Long boardId = request.boardId();
+
+        if (boardId == null) {
+            boardId = 1L;
+        }
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 board id가 없습니다."));
 
         // 비밀번호 인코딩
         String encodedPassword = PasswordUtils.encodePassword(request.password());
