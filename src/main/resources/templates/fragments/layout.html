@@ -20,7 +20,7 @@
         <h3>게시판 목록</h3>
         <ul>
             <li th:each="board : ${sidebarBoards}">
-                <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.name}">게시판</a>
+                <a th:href="@{/post/board/{id}/posts(id=${board.id})}" th:text="${board.name}">게시판</a>
             </li>
         </ul>
     </div>
