@@ -100,18 +100,47 @@
     }
 
     function attachFormListener() {
-        const form = content.querySelector('form');
-        if (!form) return;
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const res = await fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form)
-            });
-            content.innerHTML = await res.text();
-            attachFormListener();
+    const form = content.querySelector('form');
+    if (!form) return;
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const res = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form)
         });
-    }
+        content.innerHTML = await res.text();
+        attachFormListener();
+    });
+
+    content.querySelectorAll('.reply-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const existing = btn.closest('div').nextElementSibling;
+            if (existing?.classList.contains('reply-form')) {
+                existing.remove();
+                return;
+            }
+
+            const commentId = btn.dataset.commentId;
+
+            const replyForm = form.cloneNode(true);
+            replyForm.classList.add('reply-form');
+            replyForm.querySelector('h2')?.remove();
+            replyForm.querySelector('[name=parentId]').value = commentId;
+
+            replyForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const res = await fetch(replyForm.action, {
+                    method: 'POST',
+                    body: new FormData(replyForm)
+                });
+                content.innerHTML = await res.text();
+                attachFormListener();
+            });
+
+            btn.closest('div').after(replyForm);
+        });
+    });
+}
 
     btn.addEventListener('click', async () => {
         await loadComments();
