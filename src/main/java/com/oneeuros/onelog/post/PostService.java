@@ -153,7 +153,7 @@ public class PostService {
         return PasswordUtils.checkPassword(password, post.getPassword());
     }
     // 게시글 삭제
-   /* @Transactional
+   /* @Transactional - gkk tkrwp
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
@@ -169,7 +169,7 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
-        //commentService.deleteCommentsByPostId(postId);
+        commentService.deleteCommentsByPostId(postId);
 
         postRepository.delete(post);
     }
