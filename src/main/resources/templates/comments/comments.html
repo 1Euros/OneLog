@@ -6,7 +6,7 @@
 </head>
 <body>
 <div th:fragment="commentSection">
-    <div>
+    <div id="create-form">
         <div th:if="${errorMessage != null}" th:text="${errorMessage}" style="color:red;"></div>
         <form method="post" th:action="@{/comment/post/{id}/create(id=${postId})}">
             <h2>
@@ -44,8 +44,15 @@
         <div th:text="${comment.content}" ></div>
         <div th:text="${comment.nickname}" ></div>
         <div th:text="${comment.createdAt}" ></div>
+        <div th:if="${comment.parent != null}">
+            <div th:text="${comment.parent.id}" ></div>
+        </div>
+        <div th:text="${comment.depth}" ></div>
         <button th:onclick="|location.href='@{/confirm/password/comment/{id}?postId={postId}(id=${comment.id}, postId=${postId})}'|">
             수정/삭제
+        </button>
+        <button class="reply-btn" th:data-comment-id="${comment.id}" th:data-comment-depth="${comment.depth}">
+            대댓글
         </button>
 
     </div>

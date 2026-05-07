@@ -100,6 +100,7 @@
     }
 
     function attachFormListener() {
+        // 기존 폼 submit 처리
         const form = content.querySelector('form');
         if (!form) return;
         form.addEventListener('submit', async (e) => {
@@ -110,6 +111,41 @@
             });
             content.innerHTML = await res.text();
             attachFormListener();
+        });
+
+        // 대댓글 버튼 처리
+        content.querySelectorAll('.reply-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 이미 열려있으면 닫기 (토글)
+                const existing = btn.closest('div').nextElementSibling;
+                if (existing?.classList.contains('reply-form')) {
+                    existing.remove();
+                    return;
+                }
+
+                const commentId = btn.dataset.commentId;
+                const depth = parseInt(btn.dataset.commentDepth);
+
+                // 기존 폼 복제 후 h2 제거
+                const replyForm = form.cloneNode(true);
+                replyForm.classList.add('reply-form');
+                replyForm.querySelector('h2')?.remove();
+                replyForm.querySelector('[name=parentId]').value = commentId;
+                replyForm.querySelector('[name=depth]').value = depth + 1;
+
+                // 복제한 폼에도 submit 이벤트 부착
+                replyForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const res = await fetch(replyForm.action, {
+                        method: 'POST',
+                        body: new FormData(replyForm)
+                    });
+                    content.innerHTML = await res.text();
+                    attachFormListener();
+                });
+
+                btn.closest('div').after(replyForm);
+            });
         });
     }
 
