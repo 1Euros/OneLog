@@ -1,42 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>게시글 목록을 보여주는 화면입니다.</title>
+    <title>게시글 목록</title>
 </head>
 <body>
+
+<h1 th:if="${board != null}" th:text="${board.name + ' 게시글 목록'}">
+    게시판 게시글 목록
+</h1>
+
+<h1 th:if="${board == null}">
+    전체 게시글 목록
+</h1>
+
+<div>
+    <a th:if="${board == null}" href="/post/create">
+        글쓰기
+    </a>
+
+    <a th:if="${board != null}"
+       th:href="@{/post/create(boardId=${board.id})}">
+        글쓰기
+    </a>
+</div>
+
+<hr>
+
+<div th:if="${posts.content.isEmpty()}">
+    <p>아직 게시글이 없습니다.</p>
+</div>
+
+<table th:if="${!posts.content.isEmpty()}">
+    <tbody>
     <tr th:each="post : ${posts.content}">
-        <td th:text="${post.boardName}">게시판 이름</td>
+        <td>
+            <a th:href="@{/post/board/{boardId}/posts(boardId=${post.boardId})}"
+               th:text="${post.boardName}">
+                게시판 이름
+            </a>
+        </td>
+
         <td>
             <a th:href="@{/post/{postId}(postId=${post.postId})}"
                th:text="${post.title}">
                 제목
             </a>
         </td>
+
         <td>
             작성자이름 : <span th:text="${post.nickname}">익명</span><br>
             댓글수 : <span th:text="${post.commentCount}">0</span><br>
             조회수 : <span th:text="${post.viewCount}">0</span><br>
-            작성일시 : <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">05/06 14:30</span><br>
+            작성일시 :
+            <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">
+                05/06 14:30
+            </span><br>
         </td>
     </tr>
+    </tbody>
+</table>
 
-    <div>
-        <a th:if="${posts.hasPrevious()}"
-           th:href="@{/post(page=${posts.number - 1})}">
-            이전
-        </a>
+<hr>
 
-        <span>
+<!-- 특정 게시판 목록 페이징 -->
+<div th:if="${board != null}">
+    <a th:if="${posts.hasPrevious()}"
+       th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}">
+        이전
+    </a>
+
+    <span>
         <span th:text="${posts.number + 1}">1</span>
         /
         <span th:text="${posts.totalPages}">1</span>
     </span>
 
-        <a th:if="${posts.hasNext()}"
-           th:href="@{/post(page=${posts.number + 1})}">
-            다음
-        </a>
-    </div>
+    <a th:if="${posts.hasNext()}"
+       th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}">
+        다음
+    </a>
+</div>
+
+<!-- 전체 게시글 목록 페이징 -->
+<div th:if="${board == null}">
+    <a th:if="${posts.hasPrevious()}"
+       th:href="@{/post(page=${posts.number - 1})}">
+        이전
+    </a>
+
+    <span>
+        <span th:text="${posts.number + 1}">1</span>
+        /
+        <span th:text="${posts.totalPages}">1</span>
+    </span>
+
+    <a th:if="${posts.hasNext()}"
+       th:href="@{/post(page=${posts.number + 1})}">
+        다음
+    </a>
+</div>
+
 </body>
 </html>

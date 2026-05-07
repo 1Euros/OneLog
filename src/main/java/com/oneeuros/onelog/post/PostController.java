@@ -1,5 +1,7 @@
 package com.oneeuros.onelog.post;
 
+import com.oneeuros.onelog.board.Board;
+import com.oneeuros.onelog.board.BoardService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDto;
 import com.oneeuros.onelog.post.dto.PostListResponseDto;
 import com.oneeuros.onelog.post.dto.PostResponseDto;
@@ -12,13 +14,29 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostController {
     private final PostService postService;
+    private final BoardService boardService;
 
+    // 게시글 생성 화면
+    @GetMapping("/create")
+    public String createPostForm(
+            @RequestParam(required = false) Long boardId,
+            Model model
+    ){
+        List<Board> boards = boardService.findAllBoards();
+
+        model.addAttribute("boards", boards);
+        model.addAttribute("selectedBoardId", boardId);
+
+        return "posts/create";
+    }
 
 
     // 글 작성 처리
@@ -68,6 +86,22 @@ public class PostController {
         return "posts/list";
     }
 
+    // 특정 게시판 게시글 조회
+    @GetMapping("/board/{boardId}/posts")
+    public String getPostsByBoard(
+            @PathVariable Long boardId,
+            @RequestParam(defaultValue = "0") int page,
+            Model model
+    ) {
+        Page<PostListResponseDto> posts = postService.findPostListByBoard(boardId, page);
+        Board board = boardService.findById(boardId);
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("board", board);
+
+        return "posts/list";
+    }
+
     // 게시글 수정
     @PostMapping("/update/{postId}")
     public String updatePost(
@@ -92,6 +126,8 @@ public class PostController {
             return "posts/errortest";
         }
     }
+
+
 
 
 }
