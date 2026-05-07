@@ -14,7 +14,6 @@ public record CommentCreateRequestDto(
         String password,
         @NotBlank(message = "내용을 입력해주세요.")
         String content,
-        Long parentId,
-        Integer depth
+        Long parentId
 ) {
 }

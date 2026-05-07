@@ -31,7 +31,6 @@
             <input id="content" type="text" name="content">
             <br>
             <input type="hidden" name="parentId">
-            <input type="hidden" name="depth" value=0>
 
             <button>
                 제출
@@ -48,10 +47,12 @@
             <div th:text="${comment.parent.id}" ></div>
         </div>
         <div th:text="${comment.depth}" ></div>
+        <div th:text="${comment.groupId}" ></div>
+        <div th:text="${comment.groupOrder}" ></div>
         <button th:onclick="|location.href='@{/confirm/password/comment/{id}?postId={postId}(id=${comment.id}, postId=${postId})}'|">
             수정/삭제
         </button>
-        <button class="reply-btn" th:data-comment-id="${comment.id}" th:data-comment-depth="${comment.depth}">
+        <button class="reply-btn" th:data-comment-id="${comment.id}">
             대댓글
         </button>
 
