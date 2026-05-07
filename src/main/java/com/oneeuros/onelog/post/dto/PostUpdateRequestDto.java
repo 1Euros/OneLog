@@ -15,7 +15,9 @@ public record PostUpdateRequestDto(
         String title,
 
         @NotBlank(message = "내용을 입력해주세요.")
-        String content
+        String content,
+
+        Long boardId
 
 ) {
 

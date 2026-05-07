@@ -2,7 +2,6 @@ package com.oneeuros.onelog.post;
 
 import com.oneeuros.onelog.board.Board;
 import com.oneeuros.onelog.board.BoardRepository;
-import com.oneeuros.onelog.comment.Comment;
 import com.oneeuros.onelog.comment.CommentService;
 import com.oneeuros.onelog.post.dto.PostCreateRequestDto;
 import com.oneeuros.onelog.post.dto.PostListResponseDto;
@@ -31,7 +30,15 @@ public class PostService {
     public Post save(PostCreateRequestDto request) {
 
 
-        Board board = boardRepository.findById(request.boardId()).orElseThrow(()->new IllegalArgumentException("해당 board id가 없습니다."));
+        // board값이 null 이면 1
+        Long boardId = request.boardId();
+
+        if (boardId == null) {
+            boardId = 1L;
+        }
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 board id가 없습니다."));
 
         // 비밀번호 인코딩
         String encodedPassword = PasswordUtils.encodePassword(request.password());
@@ -115,10 +122,56 @@ public class PostService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        post.update(request.title(), request.content());
+        Long boardId = request.boardId();
+
+        if (boardId == null) {
+            boardId = post.getBoard().getId(); // 선택 안 하면 기존 게시판 유지
+        }
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시판이 없습니다."));
+
+
+        post.update(request.title(), request.content(),board);
 
         return post;
     }
+    // 게시글 수정 화면용 조회 메서드
+    @Transactional(readOnly = true)
+    public Post findPostForEdit(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+    }
 
+
+    //수정 / 삭제시 비밀번호 확인
+    @Transactional(readOnly = true)
+    public boolean confirmPassword(Long postId, String password) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        return PasswordUtils.checkPassword(password, post.getPassword());
+    }
+    // 게시글 삭제
+   /* @Transactional - gkk tkrwp
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        if (commentService.countCommentsByPostId(postId) > 0) {
+            throw new IllegalArgumentException("댓글이 있는 게시글은 삭제할 수 없습니다.");
+        }
+
+        postRepository.delete(post);
+    }*/
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        commentService.deleteCommentsByPostId(postId);
+
+        postRepository.delete(post);
+    }
 
 }
