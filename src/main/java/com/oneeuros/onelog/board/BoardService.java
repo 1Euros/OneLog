@@ -66,4 +66,10 @@ public class BoardService {
     public List<Board> findAllBoards(){
         return boardRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public Board findById(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시판입니다"));
+    }
 }
