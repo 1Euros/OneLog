@@ -5,7 +5,8 @@
     <title>edit-comment</title>
 </head>
 <body>
-<div>
+<div th:fragment="editSection">
+    <div th:if="${errorMessage != null}" th:text="${errorMessage}" style="color:red;"></div>
     <form method="post" th:action="@{/comment/{id}/update(id=${commentId}, postId=${postId})}">
         <h2>
             댓글 수정

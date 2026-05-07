@@ -60,7 +60,7 @@
 </head>
 <body>
 
-<div id="create-board-modal">
+<div id="create-board-modal" th:fragment="createForm">
     <!-- 1. X 버튼: 클릭 시 이전 화면으로 돌아가며 플로팅 닫기 효과 -->
     <button type="button" class="close-btn" onclick="history.back()">&times;</button>
 
@@ -76,7 +76,7 @@
                    required>
 
             <!-- 서버 검증 에러 메시지 출력 -->
-            <p th:if="${errorMessage}"
+            <p th:if="${errorMessage!= null}"
                th:text="${errorMessage}"
                style="color: red; font-size: 0.85rem; margin-top: 8px;"></p>
         </div>

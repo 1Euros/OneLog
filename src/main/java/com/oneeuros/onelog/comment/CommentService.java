@@ -93,7 +93,7 @@ public class CommentService {
     // 해당 게시글의 최신순으로 첫번째 댓글 조회
     @Transactional(readOnly = true)
     public Comment findFirstComment(Long postId) {
-        return commentRepository.findFirstByPostIdOrderByCreatedAtDesc(postId).orElse(null);
+        return commentRepository.findFirstRootCommentByPostId(postId).orElse(null);
     }
 
     //해당 게시글의 댓글 수 조회

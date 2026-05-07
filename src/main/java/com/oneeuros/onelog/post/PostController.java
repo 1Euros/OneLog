@@ -112,10 +112,9 @@ public class PostController {
     ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorMessage", bindingResult.getAllErrors().get(0).getDefaultMessage());
-            // 콘솔 출력용
-            System.out.println("errorMessage for Update = " + bindingResult.getAllErrors().get(0).getDefaultMessage());
-
-            return "posts/errortest";
+            model.addAttribute("post", postService.findPostForEdit(postId));
+            model.addAttribute("boards", boardService.findAllBoards());
+            return "posts/edit-post :: editPostSection";
         }
 
         try {
@@ -123,7 +122,9 @@ public class PostController {
             return "redirect:/post/" + post.getId();
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            return "posts/errortest";
+            model.addAttribute("post", postService.findPostForEdit(postId));
+            model.addAttribute("boards", boardService.findAllBoards());
+            return "posts/edit-post :: editPostSection";
         }
     }
 

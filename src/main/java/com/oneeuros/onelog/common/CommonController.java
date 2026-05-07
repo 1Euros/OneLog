@@ -22,6 +22,11 @@ public class CommonController {
     private final PostService postService;
     private final BoardService boardService;
 
+    @GetMapping("/main")
+    public String showMain() {
+        return "redirect:/post";
+    }
+
     // 비밀번호 확인 창 열기
     @GetMapping("/confirm/password/{domain}/{domainId}")
     public String showConfirmPassword (@PathVariable String domain,
@@ -38,6 +43,22 @@ public class CommonController {
 
         model.addAttribute("postId",postId);
         return "common/confirm-password";
+    }
+    @GetMapping("/confirm/password/{domain}/{domainId}/fragment")
+    public String showConfirmPasswordFragment(@PathVariable String domain,
+                                              @PathVariable Long domainId,
+                                              @RequestParam(required = false) Long postId,
+                                              Model model) {
+        model.addAttribute("domain", domain);
+        model.addAttribute("domainId", domainId);
+
+        // 공통 비밀번호 확인해서 postid값을 항상 사용할 수 있게함.
+        if (postId == null && PasswordDomain.validDomain(domain) == PasswordDomain.POST) {
+            postId = domainId;
+        }
+        model.addAttribute("postId", postId);
+
+        return "common/confirm-password :: confirmSection";
     }
 
     // 비밀번호 확인
@@ -63,19 +84,16 @@ public class CommonController {
                 model.addAttribute("domainId", domainId);
                 model.addAttribute("postId", domainId);
                 model.addAttribute("errorMessage", "비밀번호가 틀렸습니다.");
-                return "common/confirm-password";
+                return "common/confirm-password :: confirmSection";
             }
 
             // 비밀번호 맞을 시 수정/삭제로 분기해서 해당 창으로 이동
             if (pa == PasswordAction.EDIT) {
-                // 수정 후 상세페이지로 이동
                 Post post = postService.findPostForEdit(domainId);
                 List<Board> boards = boardService.findAllBoards();
-
                 model.addAttribute("post", post);
                 model.addAttribute("boards", boards);
-
-                return "posts/edit-post";
+                return "posts/edit-post :: editPostSection";
             }
 
             try {
@@ -99,11 +117,13 @@ public class CommonController {
                 //수정창으로 이동
                 model.addAttribute("commentId", domainId);
                 model.addAttribute("postId", postId);
-                return "comments/edit-comment";
+                return "comments/edit-comment :: editSection";  // fragment 반환
             }else {
                 // 삭제 후 댓글 목록으로 이동
                 commentService.deleteComment(domainId);
-                return "redirect:/comment/post/%s/comments".formatted(postId);
+                model.addAttribute("comments", commentService.findComments(postId));
+                model.addAttribute("postId", postId);
+                return "comments/comments :: commentSection";  // 삭제 후 댓글목록 반환
             }
         }
     }

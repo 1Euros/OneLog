@@ -3,103 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 목록</title>
+    <style>
+        #update-board-modal {
+            position: relative; width: 350px; padding: 25px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #fff; border: 1px solid #eee;
+        }
+        #update-board-modal .close-btn {
+            position: absolute; top: 15px; right: 15px; background: none;
+            border: none; font-size: 24px; cursor: pointer; color: #aaa;
+        }
+        #update-board-modal input[type="text"] { width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        #update-board-modal .button-group { margin-top: 20px; display: flex; justify-content: space-between; }
+        #update-board-modal .update-btn { background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        #update-board-modal .delete-btn { background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+    </style>
 </head>
 <body>
+<div style="display:flex;">
+    <!-- 왼쪽 사이드바 -->
+    <div style="width:200px; min-height:100vh; border-right:1px solid #ccc; padding:10px; position:sticky; top:0;">
+        <div th:insert="~{fragments/layout :: sidebar}"></div>
+    </div>
 
-<h1 th:if="${board != null}" th:text="${board.name + ' 게시글 목록'}">
-    게시판 게시글 목록
-</h1>
+    <!-- 기존 본문 그대로 -->
+    <div style="flex:1; padding:20px;">
+        <h1 th:if="${board != null}" th:text="${board.name + ' 게시글 목록'}">
+            게시판 게시글 목록
+        </h1>
 
-<h1 th:if="${board == null}">
-    전체 게시글 목록
-</h1>
+        <h1 th:if="${board == null}">
+            전체 게시글 목록
+        </h1>
 
-<div>
-    <a th:if="${board == null}" href="/post/create">
-        글쓰기
-    </a>
+        <div>
+            <button th:if="${board != null}" th:onclick="|location.href='@{/post/create(boardId=${board.id})}'|">
+                글쓰기
+            </button>
+            <button th:unless="${board != null}" onclick="location.href='/post/create'">
+                글쓰기
+            </button>
+            <button th:if="${board != null}" id="updateBoardBtn" th:data-board-id="${board.id}">
+                수정/삭제
+            </button>
 
-    <a th:if="${board != null}"
-       th:href="@{/post/create(boardId=${board.id})}">
-        글쓰기
-    </a>
-</div>
+        </div>
 
-<hr>
+        <hr>
 
-<div th:if="${posts.content.isEmpty()}">
-    <p>아직 게시글이 없습니다.</p>
-</div>
+        <div th:if="${posts.content.isEmpty()}">
+            <p>아직 게시글이 없습니다.</p>
+        </div>
 
-<table th:if="${!posts.content.isEmpty()}">
-    <tbody>
-    <tr th:each="post : ${posts.content}">
-        <td>
-            <a th:href="@{/post/board/{boardId}/posts(boardId=${post.boardId})}"
-               th:text="${post.boardName}">
-                게시판 이름
+        <table th:if="${!posts.content.isEmpty()}">
+            <tbody>
+            <tr th:each="post : ${posts.content}">
+                <td>
+                    <a th:href="@{/post/board/{boardId}/posts(boardId=${post.boardId})}"
+                       th:text="${post.boardName}">
+                        게시판 이름
+                    </a>
+                </td>
+
+                <td>
+                    <a th:href="@{/post/{postId}(postId=${post.postId})}"
+                       th:text="${post.title}">
+                        제목
+                    </a>
+                </td>
+
+                <td>
+                    작성자이름 : <span th:text="${post.nickname}">익명</span><br>
+                    댓글수 : <span th:text="${post.commentCount}">0</span><br>
+                    조회수 : <span th:text="${post.viewCount}">0</span><br>
+                    작성일시 :
+                    <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">
+                        05/06 14:30
+                    </span><br>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <!-- 특정 게시판 목록 페이징 -->
+        <div th:if="${board != null}">
+            <a th:if="${posts.hasPrevious()}"
+               th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}">
+                이전
             </a>
-        </td>
 
-        <td>
-            <a th:href="@{/post/{postId}(postId=${post.postId})}"
-               th:text="${post.title}">
-                제목
+            <span>
+                <span th:text="${posts.number + 1}">1</span>
+                /
+                <span th:text="${posts.totalPages}">1</span>
+            </span>
+
+            <a th:if="${posts.hasNext()}"
+               th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}">
+                다음
             </a>
-        </td>
+        </div>
 
-        <td>
-            작성자이름 : <span th:text="${post.nickname}">익명</span><br>
-            댓글수 : <span th:text="${post.commentCount}">0</span><br>
-            조회수 : <span th:text="${post.viewCount}">0</span><br>
-            작성일시 :
-            <span th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm')}">
-                05/06 14:30
-            </span><br>
-        </td>
-    </tr>
-    </tbody>
-</table>
+        <!-- 전체 게시글 목록 페이징 -->
+        <div th:if="${board == null}">
+            <a th:if="${posts.hasPrevious()}"
+               th:href="@{/post(page=${posts.number - 1})}">
+                이전
+            </a>
 
-<hr>
+            <span>
+                <span th:text="${posts.number + 1}">1</span>
+                /
+                <span th:text="${posts.totalPages}">1</span>
+            </span>
 
-<!-- 특정 게시판 목록 페이징 -->
-<div th:if="${board != null}">
-    <a th:if="${posts.hasPrevious()}"
-       th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number - 1})}">
-        이전
-    </a>
-
-    <span>
-        <span th:text="${posts.number + 1}">1</span>
-        /
-        <span th:text="${posts.totalPages}">1</span>
-    </span>
-
-    <a th:if="${posts.hasNext()}"
-       th:href="@{/post/board/{boardId}/posts(boardId=${board.id}, page=${posts.number + 1})}">
-        다음
-    </a>
+            <a th:if="${posts.hasNext()}"
+               th:href="@{/post(page=${posts.number + 1})}">
+                다음
+            </a>
+        </div>
+    </div>
 </div>
 
-<!-- 전체 게시글 목록 페이징 -->
-<div th:if="${board == null}">
-    <a th:if="${posts.hasPrevious()}"
-       th:href="@{/post(page=${posts.number - 1})}">
-        이전
-    </a>
-
-    <span>
-        <span th:text="${posts.number + 1}">1</span>
-        /
-        <span th:text="${posts.totalPages}">1</span>
-    </span>
-
-    <a th:if="${posts.hasNext()}"
-       th:href="@{/post(page=${posts.number + 1})}">
-        다음
-    </a>
+<!-- 게시판 수정/삭제 모달 -->
+<div id="updateBoardModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+    <div id="updateBoardModalContent"></div>
 </div>
+
+<script th:if="${board != null}" th:inline="javascript">
+    const boardId = /*[[${board.id}]]*/ null;
+
+    document.getElementById('updateBoardBtn').addEventListener('click', async () => {
+        const res = await fetch(`/board/update-open/${boardId}/fragment`);
+        document.getElementById('updateBoardModalContent').innerHTML = await res.text();
+        document.getElementById('updateBoardModal').style.display = 'flex';
+        attachUpdateModalListeners();
+    });
+
+    function attachUpdateModalListeners() {
+        document.querySelector('.close-btn')?.addEventListener('click', () => {
+            document.getElementById('updateBoardModal').style.display = 'none';
+        });
+
+        document.querySelector('#updateBoardModalContent form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const action = e.submitter?.getAttribute('formaction') || e.target.action;
+
+            if (e.submitter?.classList.contains('delete-btn')) {
+                if (!confirm('정말로 삭제하시겠습니까?')) return;
+            }
+
+            const res = await fetch(action, {
+                method: 'POST',
+                body: new FormData(e.target)
+            });
+
+            if (!res.redirected) {
+                document.getElementById('updateBoardModalContent').innerHTML = await res.text();
+                attachUpdateModalListeners();
+            } else {
+                document.getElementById('updateBoardModal').style.display = 'none';
+                location.href = res.url;
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

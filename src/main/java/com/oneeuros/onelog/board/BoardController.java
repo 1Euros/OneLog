@@ -20,9 +20,24 @@ public class BoardController {
     // 게시판 생성 화면 열기
     @GetMapping("/create-open")
     public String openCreateForm(Model model) {
-        // Validation을 위해 빈 DTO 객체를 모델에 담아 보냅니다.
         model.addAttribute("boardRequestDto", new BoardRequestDto(""));
-        return "boards/create-form"; // 생성 화면(또는 플로팅 HTML) 반환
+        return "boards/create-form";
+    }
+
+    // 게시판 생성 화면 fragment 반환 (모달용)
+    @GetMapping("/create-open/fragment")
+    public String openCreateFormFragment(Model model) {
+        model.addAttribute("boardRequestDto", new BoardRequestDto(""));
+        return "boards/create-form :: createForm";
+    }
+
+    // 게시판 수정 화면 fragment 반환 (모달용)
+    @GetMapping("/update-open/{boardId}/fragment")
+    public String openUpdateFormFragment(@PathVariable Long boardId, Model model) {
+        Board board = boardService.findById(boardId);
+        model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+        model.addAttribute("boardId", boardId);
+        return "boards/update-form :: updateForm";
     }
 
     // 게시판 수정 화면 열기
@@ -54,7 +69,6 @@ public class BoardController {
             Model model) {
         // 입력값 검증 (컨트롤러 책임)
         if (bindingResult.hasErrors()) {
-
             if (bindingResult.hasFieldErrors("name")) {
                 var errors = bindingResult.getFieldErrors("name");
 
@@ -68,14 +82,18 @@ public class BoardController {
                     }
                 }
             }
-
-            return "boards/boards"; // 추후 연결
+            model.addAttribute("boardRequestDto", new BoardRequestDto(""));
+            return "boards/create-form :: createForm";
+        } else if (boardService.existBoardName(request.name())) {
+            model.addAttribute("errorMessage", "이미 존재하는 게시판입니다");
+            model.addAttribute("boardRequestDto", new BoardRequestDto(""));
+            return "boards/create-form :: createForm";
         }
         //trim 처리
         String name = request.name().trim();
         Board board = boardService.save(name);
         model.addAttribute("board", board);
-        return "boards/boards";
+        return "redirect:/post/board/%s/posts".formatted(board.getId());
     }
 
     //게시판 수정
@@ -102,7 +120,16 @@ public class BoardController {
                     }
                 }
             }
-            return "boards/boards"; // 추후 연결
+            Board board = boardService.findById(boardId);
+            model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+            model.addAttribute("boardId", boardId);
+            return "boards/update-form :: updateForm";
+        }else if (boardService.existBoardName(request.name())) {
+            model.addAttribute("errorMessage", "이미 존재하는 게시판입니다");
+            Board board = boardService.findById(boardId);
+            model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+            model.addAttribute("boardId", boardId);
+            return "boards/update-form :: updateForm";
         }
 
         //trim 처리
@@ -111,17 +138,24 @@ public class BoardController {
         Board board = boardService.update(boardId,name);
 
         model.addAttribute("board", board);
-        return "boards/boards";
+        return "redirect:/post/board/%s/posts".formatted(board.getId());
     }
 
     //게시판 삭제
     @PostMapping("/delete/{boardId}")
-    @ResponseBody // 테스트를 위해 임의 추가
     public String deleteBoard(
-            @PathVariable Long boardId){
+            @PathVariable Long boardId, Model model){
 
-        boardService.delete(boardId);
-        return "삭제 완료";
+        try {
+            boardService.delete(boardId);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage",e.getMessage());
+            Board board = boardService.findById(boardId);
+            model.addAttribute("boardRequestDto", new BoardRequestDto(board.getName()));
+            model.addAttribute("boardId", boardId);
+            return "boards/update-form";
+        }
+        return "redirect:/post";
         // 추후 메인 페이지로 연결 필요
     }
 

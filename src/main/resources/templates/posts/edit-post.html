@@ -6,8 +6,14 @@
 </head>
 <body>
 
-<h1>게시글 수정</h1>
-
+<div th:fragment="editPostSection">
+<h2>게시글 수정</h2>
+<div>
+  <p>
+    <strong>작성자 이름 :</strong>
+    <span th:text="${post.nickname}">작성자</span>
+  </p>
+</div>
 <hr>
 
 <form th:action="@{/post/update/{postId}(postId=${post.id})}" method="post">
@@ -45,26 +51,12 @@
 
   <br>
 
-  <div>
-    <label for="password">비밀번호</label>
-    <input id="password"
-           type="password"
-           name="password"
-           placeholder="비밀번호 6자리"
-           pattern="[0-9]{6}"
-           required>
-  </div>
-
-  <br>
-
   <button type="submit">수정 완료</button>
 
-  <button type="button"
-          th:onclick="|location.href='@{/post/{postId}(postId=${post.id})}'|">
-    취소
-  </button>
+  <button type="button" class="cancel-edit-btn">취소</button>
 
 </form>
+</div>
 
 </body>
 </html>
