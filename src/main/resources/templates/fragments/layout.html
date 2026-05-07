@@ -60,15 +60,16 @@
 
     <!-- 게시판 목록 -->
     <div class="flex-1 overflow-y-auto">
-        <ul class="menu bg-base-100 rounded-box p-0 space-y-1">
+        <ul class="p-0 space-y-1">
 
             <li th:if="${sidebarBoards != null}"
-                th:each="sideBoard : ${sidebarBoards}">
+                th:each="sideBoard : ${sidebarBoards}"
+                class="list-none">
 
                 <a th:href="@{/post/board/{id}/posts(id=${sideBoard.id})}"
                    th:text="${sideBoard.name}"
-                   class="rounded-lg px-3 py-2"
-                   th:classappend="${board != null and board.id == sideBoard.id} ? ' active font-semibold' : ''">
+                   class="btn btn-ghost w-full justify-start rounded-full mb-1"
+                   th:classappend="${board != null and board.id == sideBoard.id} ? ' btn-active font-semibold' : ''">
                     게시판 이름
                 </a>
 
