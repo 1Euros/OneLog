@@ -24,9 +24,19 @@
 
             <!-- 상단 이동 -->
             <div class="flex justify-between items-center">
-                <a href="/post" class="btn btn-ghost">
-                    ← 목록으로
-                </a>
+                <div class="flex items-center gap-2">
+                    <a th:href="@{/post/board/{boardId}/posts(boardId=${post.board.id})}"
+                       class="btn btn-ghost">
+                        ←
+                        <span th:text="${post.board.name}">게시판</span>
+                        목록으로
+                    </a>
+
+                    <a href="/post"
+                       class="btn btn-ghost btn-sm text-base-content/60">
+                        전체 목록
+                    </a>
+                </div>
 
                 <button id="postConfirmBtn"
                         th:data-post-id="${post.id}"
