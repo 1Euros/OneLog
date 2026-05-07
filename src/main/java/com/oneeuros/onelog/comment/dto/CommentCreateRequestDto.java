@@ -13,6 +13,7 @@ public record CommentCreateRequestDto(
         @Pattern(regexp = "^[0-9]{6}$")
         String password,
         @NotBlank(message = "내용을 입력해주세요.")
-        String content
+        String content,
+        Long parentId
 ) {
 }
