@@ -14,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +23,20 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
     private final PostService postService;
     private final BoardService boardService;
+
+    // 게시글 생성 화면
+    @GetMapping("/create")
+    public String createPostForm(
+            @RequestParam(required = false) Long boardId,
+            Model model
+    ){
+        List<Board> boards = boardService.findAllBoards();
+
+        model.addAttribute("boards", boards);
+        model.addAttribute("selectedBoardId", boardId);
+
+        return "posts/create";
+    }
 
 
     // 글 작성 처리
