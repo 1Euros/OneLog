@@ -25,7 +25,7 @@
         </div>
 
         <div class="navbar-end gap-2">
-            <a href="/post" class="btn btn-ghost btn-sm">
+            <a href="/post" class="btn btn-ghost btn-sm hidden sm:flex">
                 전체 글
             </a>
 
@@ -39,15 +39,6 @@
 <!-- 왼쪽 사이드바 fragment -->
 <div th:fragment="sidebar" class="h-full flex flex-col">
 
-    <!-- 로고 영역 -->
-    <div class="mb-6">
-        <a href="/post" class="text-2xl font-black text-primary tracking-tight">
-            OneLog
-        </a>
-        <p class="text-xs text-base-content/60 mt-1">
-            게시판 프로젝트
-        </p>
-    </div>
 
     <!-- 전체 게시글 -->
     <a href="/post"
@@ -166,13 +157,11 @@
 </div>
 <!-- 푸터 fragment -->
 <footer th:fragment="footer">
-    <div class="footer footer-center p-6 bg-base-100 border-t border-base-300 text-base-content/50">
+    <footer class="footer footer-center p-6 bg-neutral text-neutral-content border-t border-neutral/30">
         <p class="text-sm">
-            © 2026
-            <span class="font-semibold text-base-content/70">OneLog</span>.
-            All rights reserved.
+            © 2026 <span class="font-semibold">OneLog</span>. All rights reserved.
         </p>
-    </div>
+    </footer>
 </footer>
 
 </body>
