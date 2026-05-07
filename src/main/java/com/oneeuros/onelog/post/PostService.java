@@ -120,5 +120,25 @@ public class PostService {
         return post;
     }
 
+    //수정 / 삭제시 비밀번호 확인
+    @Transactional(readOnly = true)
+    public boolean confirmPassword(Long postId, String password) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        return PasswordUtils.checkPassword(password, post.getPassword());
+    }
+    // 게시글 삭제 : 댓글이 없을 때만 삭제
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        if (commentService.countCommentsByPostId(postId) > 0) {
+            throw new IllegalArgumentException("댓글이 있는 게시글은 삭제할 수 없습니다.");
+        }
+
+        postRepository.delete(post);
+    }
 
 }
