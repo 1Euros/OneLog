@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 생성</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body>
+
+<div th:fragment="createForm" class="card bg-base-100 shadow-2xl">
+
+    <div class="card-body relative">
+
+        <!-- 닫기 버튼 -->
+        <button type="button"
+                class="close-btn btn btn-sm btn-circle btn-ghost absolute right-3 top-3 z-[100001] bg-base-100 shadow">
+            ✕
+        </button>
+
+        <h2 class="card-title text-xl">
+            게시판 추가
+        </h2>
+
+        <p class="text-sm text-base-content/60">
+            새 게시판 이름을 입력해주세요.
+        </p>
+
+        <form th:action="@{/board/create}"
+              th:object="${boardRequestDto}"
+              method="post"
+              class="space-y-4 mt-2">
+
+            <div>
+                <label class="label">
+                    <span class="label-text">게시판 이름</span>
+                </label>
+
+                <input type="text"
+                       th:field="*{name}"
+                       placeholder="게시판 이름을 입력하세요"
+                       class="input input-bordered w-full"
+                       required>
+
+                <p th:if="${errorMessage != null}"
+                   th:text="${errorMessage}"
+                   class="text-error text-sm mt-2">
+                    에러 메시지
+                </p>
+            </div>
+
+            <div class="card-actions justify-end">
+                <button type="submit" class="btn btn-primary">
+                    추가
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

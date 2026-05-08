@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>댓글</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+</head>
+<body>
+
+<div th:fragment="commentSection" class="space-y-6">
+
+    <!-- 댓글 작성 -->
+    <div id="create-form" class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body">
+
+            <h2 class="card-title">댓글 작성</h2>
+
+            <div th:if="${errorMessage != null}" class="alert alert-error">
+                <span th:text="${errorMessage}">에러 메시지</span>
+            </div>
+
+            <form method="post"
+                  th:action="@{/comment/post/{id}/create(id=${postId})}"
+                  class="space-y-4">
+
+                <div>
+                    <label class="label" for="nickname">
+                        <span class="label-text">닉네임</span>
+                    </label>
+                    <input id="nickname"
+                           type="text"
+                           name="nickname"
+                           value="익명"
+                           class="input input-bordered w-full">
+                </div>
+
+                <div>
+                    <label class="label" for="password">
+                        <span class="label-text">비밀번호</span>
+                    </label>
+                    <input id="password"
+                           type="password"
+                           name="password"
+                           value="000000"
+                           class="input input-bordered w-full">
+                    <p class="text-xs text-base-content/50 mt-1">
+                        숫자 6자리로 입력해주세요.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="label" for="content">
+                        <span class="label-text">내용</span>
+                    </label>
+                    <input id="content"
+                           type="text"
+                           name="content"
+                           placeholder="댓글 내용을 입력해주세요"
+                           class="input input-bordered w-full">
+                </div>
+
+                <input type="hidden" name="parentId">
+
+                <div class="card-actions justify-end">
+                    <button type="submit" class="btn btn-primary">
+                        댓글 등록
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- 댓글 목록 -->
+    <div>
+        <h2 class="text-xl font-bold mb-3">댓글</h2>
+
+        <div th:if="${comments == null or #lists.isEmpty(comments)}"
+             class="alert bg-base-200">
+            <span>아직 댓글이 없습니다.</span>
+        </div>
+
+        <div class="space-y-3">
+            <div th:each="comment : ${comments}"
+                 th:style="'margin-left: ' + (${comment.depth} * 32) + 'px'"
+                 class="card bg-base-100 border border-base-300 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div th:if="${comment.isDeleted == true}" class="text-base-content/50 italic">
+                        삭제된 댓글입니다.
+                    </div>
+
+                    <div th:unless="${comment.isDeleted == true}" class="space-y-2">
+                        <div class="flex justify-between items-start gap-4">
+                            <div>
+                                <p class="font-semibold" th:text="${comment.nickname}">
+                                    닉네임
+                                </p>
+
+                                <p class="text-sm text-base-content/50"
+                                   th:text="${#temporals.format(comment.createdAt, 'MM/dd HH:mm')}">
+                                    작성일
+                                </p>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button type="button"
+                                        class="confirm-btn btn btn-xs btn-outline"
+                                        th:data-comment-id="${comment.id}"
+                                        th:data-post-id="${postId}">
+                                    수정/삭제
+                                </button>
+
+                                <button type="button"
+                                        class="reply-btn btn btn-xs btn-ghost"
+                                        th:data-comment-id="${comment.id}">
+                                    대댓글
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="text-base-content/80 whitespace-pre-line"
+                           th:text="${comment.content}">
+                            댓글 내용
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" data-theme="cupcake">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세 화면</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-base-200 min-h-screen flex flex-col">
+
+<div th:insert="~{fragments/layout :: header}"></div>
+
+<div class="flex flex-1">
+
+    <!-- 왼쪽 사이드바 -->
+    <aside class="w-64 bg-base-100 border-r border-base-300 p-4 sticky top-16 self-start min-h-[calc(100vh-4rem)]">
+        <div th:insert="~{fragments/layout :: sidebar}"></div>
+    </aside>
+    <!-- 본문 -->
+    <main class="flex-1 p-8">
+        <div class="max-w-4xl mx-auto space-y-6">
+
+            <!-- 상단 이동 -->
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <a th:href="@{/post/board/{boardId}/posts(boardId=${post.board.id})}"
+                       class="btn btn-ghost">
+                        ←
+                        <span th:text="${post.board.name}">게시판</span>
+                        목록으로
+                    </a>
+
+                    <a href="/post"
+                       class="btn btn-ghost btn-sm text-base-content/60">
+                        전체 목록
+                    </a>
+                </div>
+
+                <button id="postConfirmBtn"
+                        th:data-post-id="${post.id}"
+                        class="btn btn-outline btn-error">
+                    수정/삭제
+                </button>
+            </div>
+
+            <!-- 게시글 카드 -->
+            <article class="card bg-base-100 shadow-sm border border-base-300">
+                <div class="card-body space-y-5">
+
+                    <!-- 제목 영역 -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <a th:href="@{/post/board/{boardId}/posts(boardId=${post.board.id})}"
+                               th:text="${post.board.name}"
+                               class="badge badge-primary badge-outline hover:badge-primary">
+                                게시판 이름
+                            </a>
+
+                            <span class="text-sm text-base-content/60">
+                                조회수
+                                <span th:text="${post.viewCount}">0</span>
+                            </span>
+
+                            <span class="text-sm text-base-content/60">
+                                댓글
+                                <span th:text="${commentCount}">0</span>
+                            </span>
+                        </div>
+
+                        <h1 class="text-3xl font-bold leading-tight"
+                            th:text="${post.title}">
+                            게시글 제목
+                        </h1>
+
+                        <div class="mt-4 flex flex-wrap gap-4 text-sm text-base-content/60">
+                            <span>
+                                작성자 :
+                                <strong class="text-base-content" th:text="${post.nickname}">작성자</strong>
+                            </span>
+
+                            <span>
+                                작성일 :
+                                <span th:text="${#temporals.format(post.createdAt, 'yyyy/MM/dd HH:mm')}">
+                                    2026/05/06 14:30
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- 게시글 내용 -->
+                    <section>
+                        <h2 class="text-lg font-semibold mb-3">내용</h2>
+
+                        <div class="prose max-w-none whitespace-pre-line leading-7"
+                             th:text="${post.content}">
+                            게시글 내용입니다.
+                        </div>
+                    </section>
+
+                </div>
+            </article>
+
+            <!-- 대표 댓글 -->
+            <section class="card bg-base-100 shadow-sm border border-base-300">
+                <div class="card-body">
+
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <h2 class="card-title">대표 댓글</h2>
+                            <p class="text-sm text-base-content/60">
+                                최근 댓글을 먼저 확인할 수 있습니다.
+                            </p>
+                        </div>
+
+                        <button id="moreCommentsBtn"
+                                th:data-post-id="${post.id}"
+                                class="btn btn-primary btn-sm">
+                            댓글 더 보기
+                        </button>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(representativeComments)}"
+                         class="alert bg-base-200">
+                        <span>아직 댓글이 없습니다.</span>
+                    </div>
+
+                    <div th:each="comment : ${representativeComments}"
+                         class="border border-base-300 rounded-box p-4 bg-base-50">
+
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-semibold"
+                                   th:text="${comment.nickname}">
+                                    댓글 작성자
+                                </p>
+
+                                <p class="mt-2 text-base-content/80"
+                                   th:text="${comment.content}">
+                                    댓글 내용
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- 댓글 모달 -->
+<div id="commentModal"
+     class="hidden fixed inset-0 bg-black/60 z-[99999] items-center justify-center">
+
+    <div class="relative z-[100000] bg-base-100 rounded-box shadow-2xl w-full max-w-3xl mx-4 max-h-[80vh] overflow-y-auto">
+        <div class="sticky top-0 bg-base-100 border-b border-base-300 p-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold">댓글</h2>
+
+            <button id="closeModal"
+                    type="button"
+                    class="btn btn-sm btn-circle btn-ghost">
+                ✕
+            </button>
+        </div>
+
+        <div id="commentContent" class="p-5"></div>
+    </div>
+</div>
+
+<!-- 게시글 수정/삭제 모달 -->
+<div id="postModal"
+     class="hidden fixed inset-0 bg-black/60 z-[99999] items-center justify-center">
+
+    <div class="relative z-[100000] bg-base-100 rounded-box shadow-2xl w-full max-w-xl mx-4 max-h-[80vh] overflow-y-auto">
+
+        <button id="closePostModal"
+                type="button"
+                class="btn btn-sm btn-circle btn-ghost absolute right-3 top-3 z-[100001] bg-base-100 shadow">
+            ✕
+        </button>
+
+        <div id="postModalContent" class="p-6 pt-10"></div>
+    </div>
+</div>
+
+<div th:insert="~{fragments/layout :: footer}"></div>
+
+<script>
+    const btn = document.getElementById('moreCommentsBtn');
+    const modal = document.getElementById('commentModal');
+    const content = document.getElementById('commentContent');
+    const postId = btn.dataset.postId;
+
+    function openCommentModal() {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeCommentModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    async function loadComments() {
+        const res = await fetch(`/comment/post/${postId}/comments/fragment`);
+
+        if (!res.ok) {
+            content.innerHTML = `<div class="alert alert-error">댓글을 불러오지 못했습니다.</div>`;
+            return;
+        }
+
+        content.innerHTML = await res.text();
+        attachFormListener();
+    }
+
+
+    function attachFormListener() {
+        // 모든 폼에 fetch submit 부착
+        content.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const action = e.submitter?.getAttribute('formaction') || form.action;
+
+                const res = await fetch(action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+
+                content.innerHTML = await res.text();
+                attachFormListener();
+            });
+        });
+
+        // 대댓글 버튼
+        const commentForm = content.querySelector('#create-form form');
+
+        if (commentForm) {
+            content.querySelectorAll('.reply-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const commentBox = btn.closest('.space-y-2');
+
+                    const existing = Array.from(commentBox.children)
+                        .find(child => child.classList.contains('reply-form'));
+
+                    if (existing) {
+                        existing.remove();
+                        return;
+                    }
+
+                    const commentId = btn.dataset.commentId;
+                    const replyForm = commentForm.cloneNode(true);
+
+                    replyForm.classList.add(
+                        'reply-form',
+                        'mt-3',
+                        'ml-6',
+                        'p-4',
+                        'rounded-box',
+                        'bg-base-200',
+                        'border',
+                        'border-base-300'
+                    );
+
+                    replyForm.querySelector('[name=parentId]').value = commentId;
+
+                    replyForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+
+                        const res = await fetch(replyForm.action, {
+                            method: 'POST',
+                            body: new FormData(replyForm)
+                        });
+
+                        content.innerHTML = await res.text();
+                        attachFormListener();
+                    });
+
+                    commentBox.appendChild(replyForm);
+                });
+            });
+        }
+
+        // 댓글 수정/삭제 버튼
+        content.querySelectorAll('.confirm-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const commentId = btn.dataset.commentId;
+                const postId = btn.dataset.postId;
+
+                const res = await fetch(`/confirm/password/comment/${commentId}/fragment?postId=${postId}`);
+
+                content.innerHTML = await res.text();
+                attachFormListener();
+            });
+        });
+    }
+
+    btn.addEventListener('click', async () => {
+        await loadComments();
+        openCommentModal();
+    });
+
+    document.getElementById('closeModal').addEventListener('click', () => {
+        closeCommentModal();
+        location.reload();
+    });
+
+    // 게시글 수정/삭제 모달
+    const postModal = document.getElementById('postModal');
+    const postModalContent = document.getElementById('postModalContent');
+    const postConfirmBtn = document.getElementById('postConfirmBtn');
+    const postId2 = postConfirmBtn.dataset.postId;
+
+    function openPostModal() {
+        postModal.classList.remove('hidden');
+        postModal.classList.add('flex');
+    }
+
+    function closePostModal() {
+        postModal.classList.add('hidden');
+        postModal.classList.remove('flex');
+    }
+
+    document.getElementById('closePostModal').addEventListener('click', () => {
+        closePostModal();
+    });
+
+    postConfirmBtn.addEventListener('click', async () => {
+        const res = await fetch(`/confirm/password/post/${postId2}/fragment`);
+
+        postModalContent.innerHTML = await res.text();
+        openPostModal();
+        attachPostModalListeners();
+    });
+
+    function attachPostModalListeners() {
+        postModalContent.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const action = e.submitter?.getAttribute('formaction') || form.action;
+
+                if (e.submitter?.classList.contains('delete-btn') || action.includes('/delete')) {
+                    if (!confirm('정말로 삭제하시겠습니까?')) return;
+                }
+
+                const res = await fetch(action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+
+                if (res.redirected) {
+                    closePostModal();
+                    location.href = res.url;
+                } else {
+                    postModalContent.innerHTML = await res.text();
+                    attachPostModalListeners();
+                }
+            });
+        });
+
+        postModalContent.querySelector('.cancel-edit-btn')?.addEventListener('click', () => {
+            closePostModal();
+        });
+    }
+</script>
+
+</body>
+</html>
